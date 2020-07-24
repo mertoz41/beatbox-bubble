@@ -1,0 +1,87 @@
+.row {
+  clear: both;
+}
+
+.pad {
+  width: 50px;
+  height: 50px;
+  float: left;
+  margin: 0 5px 5px 0;
+  cursor: pointer;
+  background: grey;
+}
+
+.pad.active {
+  background: green;
+}
+
+.pad.playing {
+  background: silver;
+}
+.pad.active.playing {
+  background: lime;
+}
+
+.samplePad {
+    width: 150px;
+    float: left;
+    border: 15px solid green;
+    padding: 50px;
+    margin: 30px;
+}
+.pads {
+  position: absolute;
+  top: 300px;
+  left: 80px;
+  margin: auto;
+  width: 100%;
+  padding: 10px;
+}
+
+.trackPlayer{
+  position: absolute;
+  top: 500px;
+  left: 180px;
+  margin: auto;
+  width: 100%;
+  padding: 10px;
+
+}
+.header {
+  position: relative;
+  background-color: grey;
+  padding: 30px;
+}
+.username {
+  position: absolute;
+  right: 50px;
+  top: 20px
+}
+
+.music {
+  position: absolute;
+  left: 500px;
+  top: 0px;
+}
+
+.scroller-profile {
+  width: 500px;
+  height: 635px;
+  overflow-y: scroll;
+  scrollbar-color: rebeccapurple green;
+  scrollbar-width: thin;
+}
+
+.user-tracks {
+  position: absolute;
+  right: 470px;
+  top: 85px;
+}
+
+.timer {
+  position: absolute;
+  left: 250px;
+  background-color: white;
+
+
+}
