@@ -1,9 +1,10 @@
 import React, {Component} from 'react'
-import { Menu } from 'semantic-ui-react'
+import { Grid, Menu, Segment } from 'semantic-ui-react'
 import Sampler from './sampler'
 import Recorder from './recorder'
 import Playlist from './playlist'
 import { Button, Icon } from 'semantic-ui-react'
+import Navbar from './Navbar'
 
 
 
@@ -138,13 +139,13 @@ class Machine extends Component {
          
         
         let name = Object.keys(record)[0]
-        let blob = Object.values(record)[0]
+        let blob = Object.values(record)[0].blobURL
 
         let patternObj = {
           [name]: channelPadsArray
         }
 
-   
+         
          
         let updatedPads = []
         if (this.state.pads[0]){
@@ -241,21 +242,22 @@ class Machine extends Component {
         // reader.readAsDataURL(this.state.recordedTrack)
         // let blober = new Blob(chunks, {type: 'audio/mpeg-3'})
 
-        let url = Object.values(track)[0]
+        // let url = Object.values(track)[0]
         let id = this.props.loggedInUser.id
-        let trac = this.state.recordedTrack
+        // let trac = this.state.recordedTrack
         let trackName = Object.keys(track)[0]
+        let trackBlob = Object.values(track)[0]
       
         
         
         let formData = new FormData()
         formData.append("id", id)
-        formData.append("track", this.state.recordedTrack.blob)
+        formData.append("track", trackBlob.blob)
         formData.append("name", trackName)
+          
          
-         
-        fetch('http://localhost:3000/add', {
-          method: "PATCH",
+        fetch('http://localhost:3000/songs', {
+          method: "POST",
           headers: {
                    "Accept" : "application/json"
                   //  "Content-Type": "multipart/form-data"
@@ -264,7 +266,11 @@ class Machine extends Component {
 
         })
         .then(resp => resp.json())
-        .then(resp => {console.log(resp)})
+        .then(resp => {
+           
+          if(resp){
+            this.props.exitMachine()
+          }})
          
 
 
@@ -296,14 +302,20 @@ class Machine extends Component {
         // .then(resp => {
            
         // })
-   
         
+      }
+
+      removeTrack = () =>{
+        this.setState({recordedTrack: null})
       }
     
     render(){
         return(
             <div>
-                <Menu pointing>
+              <Navbar toLoggedInUserProfile={this.props.toLoggedInUserProfile} logUserOut={this.props.logUserOut} backToTimeline={this.props.backToTimeline} searchedUser={this.props.searchedUser} users={this.props.users} loggedInUser={this.props.loggedInUser} startMachine={this.props.startMachine}/>
+              <Grid>
+                <Grid.Column width={2}>
+                <Menu fluid vertical tabular>
                 <Menu.Item
             name='Sampler'
             active={this.state.activeItem === 'Sampler'}
@@ -320,22 +332,26 @@ class Machine extends Component {
             onClick={event => this.handleItemClick(event)}
           />
         </Menu>
+        </Grid.Column>
+        </Grid>
         {this.state.activeItem === "Sampler" ? 
         < Sampler addPattern={this.addPattern} sampleLetters={this.state.sampleLetters} deleteSample={this.deleteSample} recordedSamples={this.state.recordedSamples} getSampleSounds={this.getSampleSounds}/>
         :
         null
         }
         {this.state.activeItem === "Recorder" ?
-        <Recorder deletePattern={this.deletePattern}recordedPatterns={this.state.recordedPatterns} blobChannels={this.state.blobChannels} addPattern={this.addPattern}/>
+        <Recorder postTrack={this.postTrack}deletePattern={this.deletePattern}recordedPatterns={this.state.recordedPatterns} blobChannels={this.state.blobChannels} addPattern={this.addPattern}/>
         :
         null
         }
         {this.state.activeItem === "Playlist" ?
-        <Playlist postTrack={this.postTrack} recordedTrack={this.state.recordedTrack} trackIncoming={this.trackIncoming} mutedList={this.state.muted} mute={this.mute} namedChannels={this.state.namedChannels} removePad={this.removePad} addPad={this.addPad} bpm={this.state.bpm} handleBpmChange={this.handleBpmChange} playing={this.state.playing} togglePlaying={this.togglePlaying} pos={this.state.pos} pads={this.state.pads} toggleActive={this.toggleActive}/>
+        <Playlist removeTrack={this.removeTrack} postTrack={this.postTrack} recordedTrack={this.state.recordedTrack} trackIncoming={this.trackIncoming} mutedList={this.state.muted} mute={this.mute} namedChannels={this.state.namedChannels} removePad={this.removePad} addPad={this.addPad} bpm={this.state.bpm} handleBpmChange={this.handleBpmChange} playing={this.state.playing} togglePlaying={this.togglePlaying} pos={this.state.pos} pads={this.state.pads} toggleActive={this.toggleActive}/>
         :
         null      
         }
+        <div className="activate-sampler">
             <Button icon onKeyDown={event => this.playSampleSounds(event)}><Icon name="hand paper outline" /></Button>
+            </div>
             
             </div>
         )

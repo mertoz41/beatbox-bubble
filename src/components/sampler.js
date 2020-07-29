@@ -65,6 +65,9 @@ class Sampler extends Component {
                             </div>
                     )
                 })}
+                <div className="sampler-modal">
+
+               
                 <Modal trigger={<Button icon><Icon name="info"/></Button>} basic size='small'>
                 <Header icon='info' content='Sampler Instructions' />
                 <Modal.Content>
@@ -79,6 +82,7 @@ class Sampler extends Component {
 
                 </Modal.Content>
                 </Modal>
+                </div>
                 {this.props.recordedSamples.map(audio =>{
                     return(
                         <div>

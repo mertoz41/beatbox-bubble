@@ -16,7 +16,6 @@ class Playlist extends Component{
     render(){
         return(
             <div>
-                experimenting-playlist
                 {this.props.namedChannels.length < 1 ?
                 null
                 :
@@ -31,11 +30,14 @@ class Playlist extends Component{
                 <div>
                 {this.props.recordedTrack ? 
                 <div>
-                <TrackPlayer postTrack={this.props.postTrack} recordedTrack={this.props.recordedTrack}/>
+                <TrackPlayer removeTrack={this.props.removeTrack} postTrack={this.props.postTrack} recordedTrack={this.props.recordedTrack}/>
                 </div>
                 :
                 null
                 }
+                <div className="playlist-modal">
+
+                
                 <Modal trigger={<Button icon><Icon name="info"/></Button>} basic size='small'>
                 <Header icon='info' content='Playlist Instructions' />
                 <Modal.Content>
@@ -50,6 +52,7 @@ class Playlist extends Component{
 
                 </Modal.Content>
                 </Modal>
+                </div>
                 
                 </div>
             </div>

@@ -23,16 +23,19 @@
 }
 
 .samplePad {
+  position: relative;
+  border-radius: 20px;
     width: 150px;
     float: left;
-    border: 15px solid green;
-    padding: 50px;
-    margin: 30px;
+    background-color: #696969;
+    padding: 30px;
+    margin: 40px;
+    left: 300px;
 }
 .pads {
   position: absolute;
   top: 300px;
-  left: 80px;
+  left: 100px;
   margin: auto;
   width: 100%;
   padding: 10px;
@@ -47,10 +50,13 @@
   padding: 10px;
 
 }
-.header {
+.nav-header {
   position: relative;
-  background-color: grey;
+  background-image: linear-gradient(#696969, white);
+  height: 120px;
+
   padding: 30px;
+  text-align: center;
 }
 .username {
   position: absolute;
@@ -64,24 +70,214 @@
   top: 0px;
 }
 
-.scroller-profile {
-  width: 500px;
-  height: 635px;
+
+.profile-card{
+  position: absolute;
+  top: 110px;
+  left: 10px;
+  height: 4px;
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+
+
+}
+.follow-menu {
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+  background-color: white;
+  border-radius: 30px;
+  height: 200px;
+  width: 291px;
+  position: absolute;
+  top: 390px;
+  left: 0px;
+}
+
+.user-tracks {  
+
+  position: absolute;
+  left: 340px;
+  top: 98px;
+  margin-bottom: 10px;
+}
+.scroller-user-songs {
+  position: relative;
+  top: 20px;
+  width: 520px;
+  height: 600px;
   overflow-y: scroll;
   scrollbar-color: rebeccapurple green;
   scrollbar-width: thin;
 }
 
-.user-tracks {
+.user-song{
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+  position: relative;
+  background-color: #DCDCDC;
+  border-radius: 20px;
+  width: 490px;
+  height: 140px;
+  margin-bottom: 60px;
+  text-align: center;
+}
+.user-shared-song{
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+  position: relative;
+  top: 20px;
+  background-color: #DCDCDC;
+  border-radius: 20px;
+  width: 490px;
+  height: 140px;
+  margin-bottom: 90px;
+
+}
+.user-shared-tracks {
   position: absolute;
-  right: 470px;
-  top: 85px;
+  text-align: center;
+  top: 80px;
+  right: 30px;
+
+
+}
+.scroller-user-shared-songs{
+  position: relative;
+  top: 20px;
+  overflow-y: scroll;
+  height: 600px;
+  width: 530px;
+  scrollbar-color: rebeccapurple green;
+  scrollbar-width: thin;
+  margin-bottom: 30px;
+
+}
+
+.singlewaveform {
+  position: relative;
+  text-align: center;
+  bottom: 30px;
+
+}
+.track-name{
+  position: relative;
+  text-align: center;
 }
 
 .timer {
   position: absolute;
-  left: 250px;
-  background-color: white;
+  left: 300px;
+  color: #00FF00
+}
 
+.timeline {
+  position: absolute;
+  left: 450px;
+}
+
+.comments {
+  position: absolute;
+  width: 500px;
+  right: 20px;
+  top: 50px
+}
+.comments-scroller {
+  width: 500px;
+  height: 350px;
+  overflow-y: scroll;
+  scrollbar-color: rebeccapurple green;
+  scrollbar-width: thin;
+}
+
+
+
+.following-list {
+
+  position: absolute;
+  top: 60px;
+  left: 10px;
+}
+.followers-list {
+  position: absolute;
+  top: 60px;
+  left: 10px;
+}
+.mic {
+  position: absolute;
+  top: 95px;
+  left: 350px;
+}
+.select {
+  position: fixed;
+  left: 200px;
+  top: 100px;
+  
+}
+.play-button {
+  position: fixed;
+  left: 303px;
+  top: 160px;
+
+}
+.activate-sampler {
+  position: fixed;
+  left: 303px;
+  top: 100px;
+}
+.controls {
+  position: absolute;
+  width: 200px;
+  border-radius: 20px;
+  height: 100px;
+  right: 250px;
+  top: 100px;
+  background: #C0C0C0;
+}
+.sampler-modal {
+  position: fixed;
+  left: 260px;
+  top: 100px
+}
+
+.recorder-modal{
+  position: fixed;
+  left: 260px;
+  top: 100px
+}
+
+.playlist-modal{
+  position: fixed;
+  left: 260px;
+  top: 100px
+}
+
+.records {
+  position: fixed;
+  left: 300px;
+
+}
+.records-edit{
+  position: fixed;
+  right: 120px;
+  top: 120px;
+
+}
+
+.home-button {
+  position: absolute;
+  left: 250px;
+  top: 31px;
+  
+}
+
+.machine-button {
+  position: absolute;
+  left: 300px;
+  top: 31px;
+
+}
+
+.app-name {
+  position: absolute;
+  left: 540px;
+  top: 30px;
+  color: white;
+  text-shadow: 1px 1px 2px black, 0 0 25px #00FF00, 0 0 5px #00FF00;
 
 }

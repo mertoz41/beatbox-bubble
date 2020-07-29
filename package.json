@@ -17,7 +17,9 @@
     "react-sequencer": "^3.0.0",
     "react-sound": "^1.2.0",
     "semantic-ui-react": "^0.88.2",
-    "waveform-react": "^0.2.3"
+    "styled-components": "^5.1.1",
+    "waveform-react": "^0.2.3",
+    "wavesurfer.js": "^4.0.1"
   },
   "scripts": {
     "start": "react-scripts start",

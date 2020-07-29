@@ -1,13 +1,13 @@
 import React, {Component} from 'react'
 import {ReactMic} from 'react-mic'
-import { Button, Icon } from 'semantic-ui-react'
+import { Button, Icon, Grid } from 'semantic-ui-react'
 
 class Mic extends Component {
     state = {
         record: false,
-        countDown: 1,
+        countDown: 5,
         chunk: [],
-        timer: 1
+        timer: 5
     }
 audioChunks = []
     
@@ -63,7 +63,7 @@ audioChunks = []
             button = "play"
         } 
         return(
-            <div>
+            <div className="mic">
                 <div className="timer">
                 <h3>{this.state.timer}</h3>
                 </div>
@@ -72,9 +72,9 @@ audioChunks = []
                 className="sound-wave"
                 onStop={this.onStop}
                 onData={this.onData}
-                strokeColor="#000000"
-                backgroundColor="#FF4081" />
-                
+                strokeColor="#00FF00"
+                backgroundColor= "#696969"/>
+                <div className="select">
                 <select value={this.state.countDown} onChange={this.handleChange}>
                     <option value="1">one</option>
                     <option value="2">two</option>
@@ -82,7 +82,10 @@ audioChunks = []
                     <option value="4">four</option>
                     <option value="5">five</option>
                 </select>
+                </div>
+                <div className="play-button">
                 <Button icon onClick={this.record} type="button"><Icon name={button}/></Button>
+                </div>
                 
             </div>
         )

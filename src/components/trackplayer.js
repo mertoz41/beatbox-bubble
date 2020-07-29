@@ -7,6 +7,11 @@ class TrackPlayer extends Component{
         trackName: ""
     }
 
+    resetState = () =>{
+        this.setState({ trackName: ""})
+        this.props.removeTrack()
+    }
+
     playTrack = ()=>{
         console.log("experimenting")
          
@@ -22,8 +27,9 @@ class TrackPlayer extends Component{
         event.preventDefault()
         let name = this.state.trackName
         let trackObj = {
-            [name]: this.props.recordedTrack.blobURL
-        }
+            [name]: this.props.recordedTrack
+        } 
+         
         this.props.postTrack(trackObj)
     }
     // render(){
@@ -42,11 +48,11 @@ class TrackPlayer extends Component{
             return(
                 <div className="trackPlayer">
                     <Button icon onClick={this.playTrack}><Icon name="play"/></Button>
+                    <Button icon onClick={this.resetState}><Icon name="trash alternate"/></Button>
                     <form>
                         <input onChange={event=> this.fixState(event)} value={this.state.trackName} placeholder="track name goes here..."/>
-                        <button type="submit" onClick={event => this.exportTrack(event)}>Share track</button>
+                        <Button icon onClick={event=> this.exportTrack(event)}><Icon name="upload" /></Button>
                     </form>
-                    trackplayer experimenting
                 </div>
             )
         }

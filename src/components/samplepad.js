@@ -15,7 +15,7 @@ class SamplePad extends Component {
         
         return(
             <div className="samplePad">
-                <p>{letter}</p>
+                <h2>{letter}</h2>
                 <Button icon onClick={() => this.props.deleteSample(this.props.sample)}><Icon name="trash"/></Button>
                 <Button icon onClick={() => this.props.addPattern(this.props.sample)}><Icon name="fork"/></Button>
             </div>

@@ -1,6 +1,8 @@
 import React,{Component} from 'react'
 import { Search, Grid, Button, Icon  } from 'semantic-ui-react'
 import { withRouter } from "react-router";
+import { Redirect } from 'react-router-dom';
+
 
 
 
@@ -35,39 +37,53 @@ class Navbar extends Component{
         this.props.history.push('/machine')
         this.props.startMachine()
     }
+    timelineRedirect = () =>{
+        this.props.history.push('/timeline')
+        this.props.backToTimeline()
+        // return <Redirect to="/timeline"/>
+
+    }
 
     userRedirect = () =>{
-        this.props.searchedUser(this.props.loggedInUser)
-        // this.props.history.push('/profile')
+         
+        // this.props.searchedUser(this.props.loggedInUser)
+        this.props.history.push('/profile')
+    }
+
+    logOut = () =>{
+        this.props.history.push('/login')
+        this.props.logUserOut()
 
     }
 
 
     render(){
         return(
-            <div className="header">
+            <div className="nav-header">
                 <Grid>
                 <Grid.Column width={3}>
                 <Search placeholder="Search beatboxers" onResultSelect={event => this.selectedUser(event)} results={this.state.boxers} value={this.state.searching} onSearchChange={event => this.fixState(event)}/>
                 </Grid.Column>
-        
-                </Grid>
-                <div className="music">
-                <Button icon onClick={this.machineRedirect}>
-                <Icon name='music' />
-                
-                </Button>
+                <div className="app-name">
+                    <h1>Beatbox Bubble</h1>
+                </div>
+                <div className="home-button">
+                <Button icon onClick={this.timelineRedirect}><Icon name="globe"/></Button>
+                </div>
+                <div className="machine-button">
+
+                <Button icon onClick={this.machineRedirect}><Icon name="microphone"/></Button>
                 </div>
 
-                <Grid>
+                
                 
 
                 <div class="username">
-                <Button icon labelPosition='left' onClick={this.userRedirect}>
+                <Button icon labelPosition='left' onClick={() => this.props.toLoggedInUserProfile(this.props.loggedInUser)}>
                 <Icon name='user' />
                 {this.props.loggedInUser.username}
                 </Button>
-                <Button icon labelPosition='right'>
+                <Button icon labelPosition='right' onClick={this.logOut}>
                 Logout 
                 <Icon name='sign out alternate' />
                 </Button>

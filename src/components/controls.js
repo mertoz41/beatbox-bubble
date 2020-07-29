@@ -7,6 +7,7 @@ const Controls = (props) => {
 
     return (
         <div className='controls'>
+            <p>Sequence Player</p>
             <Button Icon onClick={()=> props.togglePlaying()}><Icon name={buttonText}/></Button>
             <button onClick={()=> props.addPad()}>Add</button>
             <button onClick={()=> props.removePad()}>Remove</button>

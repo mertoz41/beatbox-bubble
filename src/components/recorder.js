@@ -9,7 +9,8 @@ class Recorder extends Component{
     state = {
         records: [],
         recordName: "",
-        recordNames: []
+        recordNames: [],
+        recordwBlobs: []
         }
 
     resetState = () =>{
@@ -17,6 +18,7 @@ class Recorder extends Component{
     }
 
     recordIncome = (record) =>{
+        debugger 
         this.setState({records: [...this.state.records, record]})
 
     }
@@ -34,10 +36,11 @@ class Recorder extends Component{
         event.preventDefault()
         let record = {}
         let name = this.state.recordName
-        record[name] = pattern.blobURL
+        record[name] = pattern
+        this.setState({recordwBlobs: [...this.state.recordwBlobs, record]})
         this.props.addPattern(record) 
         this.resetState()
-
+    
     }
 
     playRecord = (sound) =>{
@@ -45,12 +48,18 @@ class Recorder extends Component{
         new Audio(sound.blobURL).play()
     }
     playPatternRecord = (sound) =>{
-        let audio = Object.values(sound)[0]
-        new Audio(audio).play()
+        let audio = Object.values(sound)[0] 
+        new Audio(audio.blobURL).play()
     }
     patternName = (pattern) =>{
         let name = Object.keys(pattern)[0]
         return name
+    }
+    exportTrack = (event, pattern) =>{
+        
+        event.preventDefault()
+        this.props.postTrack(pattern)
+        
     }
 
     
@@ -59,11 +68,12 @@ class Recorder extends Component{
 
         return(
             <div>
-                experimenting-recorder
                 <Mic recordIncome={this.recordIncome}/>
+                
+
                 {this.state.records.map((instance) =>{
                     return(
-                        <div>
+                        <div className="records-edit">
                             <Button icon onClick={() => this.playRecord(instance)}><Icon name="play"/></Button>
                             <Button icon onClick={this.resetState}><Icon name="trash alternate"/></Button>
                             <form onSubmit={(event) => this.addToPlaylist(event, instance)}>
@@ -73,6 +83,11 @@ class Recorder extends Component{
                         </div>
                     )
                 })}
+                
+
+                <div className="recorder-modal">
+
+                
                 <Modal trigger={<Button icon><Icon name="info"/></Button>} basic size='small'>
                 <Header icon='info' content='Pattern Recorder Instructions' />
                 <Modal.Content>
@@ -86,20 +101,25 @@ class Recorder extends Component{
 
                 </Modal.Content>
                 </Modal>
+                </div>
 
-
+                <div className="records">
                 {this.props.recordedPatterns.map((pattern)=>{
                     return(
                     <div>
                         <p>{this.patternName(pattern)}</p>
                     <Button icon onClick={() => this.playPatternRecord(pattern)}><Icon name="play"/></Button>
                     <Button icon onClick={() => this.props.deletePattern(pattern)}><Icon name="trash alternate"/></Button>
-
-                    
+                    <Button icon onClick={event=> this.exportTrack(event, pattern)}><Icon name="upload" /></Button>
 
                     </div>
                     )
                 })}
+                </div>
+                
+
+                
+
             
                 
                 
