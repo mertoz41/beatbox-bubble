@@ -60,7 +60,6 @@ class Machine extends Component {
         }
 
         this.setState({namedChannels: namedChannels})
-        console.log('changed', rowIndex, id)
     }
   
       setTimer() {
@@ -78,7 +77,6 @@ class Machine extends Component {
             pos = 0;
         }
         this.setState({ pos: pos });
-        console.log(pos);
         this.checkPad()
     }
 
@@ -94,9 +92,8 @@ class Machine extends Component {
       }
     
       playSound(index){  
-        console.log(index, "experimenting")
+       
         if (this.state.muted.includes(index)){
-          console.log(index, "muted")
         } else {
         new Audio(this.state.blobChannels[index]).play()
         }
@@ -128,6 +125,8 @@ class Machine extends Component {
 
       addPattern = (record) =>{ 
 
+         
+
 
         let channelPadsArray = []
 
@@ -139,7 +138,7 @@ class Machine extends Component {
          
         
         let name = Object.keys(record)[0]
-        let blob = Object.values(record)[0].blobURL
+        let blob = Object.values(record)[0]
 
         let patternObj = {
           [name]: channelPadsArray
@@ -198,10 +197,26 @@ class Machine extends Component {
       }
 
       deleteSample = (sample) =>{
+        
+        let sampleBlob = Object.values(sample)[0]
+        let sampleName = Object.keys(sample)[0]
+        let filteredBlobChannels = this.state.blobChannels.filter((piece) => piece !== sampleBlob)
+        let filteredNamedChannels = this.state.namedChannels.filter((channel) => Object.keys(channel)[0] !== sampleName)
+        let filteredRecordedPatterns = this.state.recordedPatterns.filter((pattern) => pattern !== sample)
+
+         
+
+
         let updatedSampleLetters = this.state.sampleLetters.filter((letter) => letter !== Object.keys(sample)[0]) 
         let samples = this.state.recordedSamples
         let updatedSamples = samples.filter(smp => smp !== sample)
-        this.setState({ recordedSamples: updatedSamples, sampleLetters: updatedSampleLetters})
+        this.setState({ 
+          recordedSamples: updatedSamples,
+          sampleLetters: updatedSampleLetters,
+          blobChannels: filteredBlobChannels,
+          namedChannels: filteredNamedChannels,
+          recordedPatterns: filteredRecordedPatterns
+          })
         
          
       }
@@ -245,14 +260,14 @@ class Machine extends Component {
         // let url = Object.values(track)[0]
         let id = this.props.loggedInUser.id
         // let trac = this.state.recordedTrack
-        let trackName = Object.keys(track)[0]
-        let trackBlob = Object.values(track)[0]
+        let trackName = track.name
+        let trackBlob = track.blob
       
-        
+        debugger 
         
         let formData = new FormData()
         formData.append("id", id)
-        formData.append("track", trackBlob.blob)
+        formData.append("track", trackBlob)
         formData.append("name", trackName)
           
          
@@ -267,10 +282,11 @@ class Machine extends Component {
         })
         .then(resp => resp.json())
         .then(resp => {
+          this.props.addNewSong(resp)
+        }) 
            
-          if(resp){
-            this.props.exitMachine()
-          }})
+        
+          
          
 
 
@@ -312,7 +328,7 @@ class Machine extends Component {
     render(){
         return(
             <div>
-              <Navbar toLoggedInUserProfile={this.props.toLoggedInUserProfile} logUserOut={this.props.logUserOut} backToTimeline={this.props.backToTimeline} searchedUser={this.props.searchedUser} users={this.props.users} loggedInUser={this.props.loggedInUser} startMachine={this.props.startMachine}/>
+              <Navbar getTimeline={this.props.getTimeline} toLoggedInUserProfile={this.props.toLoggedInUserProfile} logUserOut={this.props.logUserOut} backToTimeline={this.props.backToTimeline} searchedUser={this.props.searchedUser} users={this.props.users} loggedInUser={this.props.loggedInUser} startMachine={this.props.startMachine}/>
               <Grid>
                 <Grid.Column width={2}>
                 <Menu fluid vertical tabular>

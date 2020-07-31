@@ -72,8 +72,8 @@ audioChunks = []
                 className="sound-wave"
                 onStop={this.onStop}
                 onData={this.onData}
-                strokeColor="#00FF00"
-                backgroundColor= "#696969"/>
+                strokeColor="#98FB98"
+                backgroundColor= "#C0C0C0"/>
                 <div className="select">
                 <select value={this.state.countDown} onChange={this.handleChange}>
                     <option value="1">one</option>

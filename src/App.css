@@ -1,41 +1,52 @@
 .row {
   clear: both;
+
 }
 
 .pad {
   width: 50px;
   height: 50px;
   float: left;
-  margin: 0 5px 5px 0;
+  margin: 0 7px 7px 0;
   cursor: pointer;
   background: grey;
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+
 }
 
 .pad.active {
-  background: green;
+  background: #98FB98;
+}
+.login-icon{
+  color: #98FB98;
 }
 
 .pad.playing {
   background: silver;
 }
 .pad.active.playing {
-  background: lime;
+  background: #00FA9A;
 }
 
 .samplePad {
   position: relative;
   border-radius: 20px;
+  text-align: center;
     width: 150px;
     float: left;
-    background-color: #696969;
+    background-color: #C0C0C0;
     padding: 30px;
     margin: 40px;
-    left: 300px;
+    left: 365px;
+    top: 50px;
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
 }
 .pads {
-  position: absolute;
-  top: 300px;
-  left: 100px;
+  position: relative;
+  top: 40px;
+  left: 450px;
+
+
   margin: auto;
   width: 100%;
   padding: 10px;
@@ -43,10 +54,14 @@
 
 .trackPlayer{
   position: absolute;
-  top: 500px;
-  left: 180px;
+  background-color: #A9A9A9;
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+
+  border-radius: 20px;
+  height: 130px;
+  top: 350px;
+  left: 100px;
   margin: auto;
-  width: 100%;
   padding: 10px;
 
 }
@@ -90,23 +105,22 @@
   top: 390px;
   left: 0px;
 }
+.profile-sections{
+  background-image: linear-gradient(#00FA9A, #98FB98);
+  border-radius: 20px;
+
+
+}
 
 .user-tracks {  
 
   position: absolute;
+  text-align: center;
   left: 340px;
-  top: 98px;
+  top: 140px;
   margin-bottom: 10px;
 }
-.scroller-user-songs {
-  position: relative;
-  top: 20px;
-  width: 520px;
-  height: 600px;
-  overflow-y: scroll;
-  scrollbar-color: rebeccapurple green;
-  scrollbar-width: thin;
-}
+
 
 .user-song{
   box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
@@ -132,16 +146,26 @@
 .user-shared-tracks {
   position: absolute;
   text-align: center;
-  top: 80px;
+  top: 140px;
   right: 30px;
 
 
+}
+.scroller-user-songs {
+  position: relative;
+  top: 20px;
+  width: 520px;
+  height: 550px;
+  overflow-y: scroll;
+  scrollbar-color: rebeccapurple green;
+  scrollbar-width: thin;
+  margin-bottom: 30px;
 }
 .scroller-user-shared-songs{
   position: relative;
   top: 20px;
   overflow-y: scroll;
-  height: 600px;
+  height: 500px;
   width: 530px;
   scrollbar-color: rebeccapurple green;
   scrollbar-width: thin;
@@ -150,9 +174,9 @@
 }
 
 .singlewaveform {
-  position: relative;
-  text-align: center;
-  bottom: 30px;
+  position: absolute;
+  bottom: 0px;
+  left: 120px;
 
 }
 .track-name{
@@ -163,16 +187,79 @@
 .timer {
   position: absolute;
   left: 300px;
-  color: #00FF00
+  color: black
 }
 
 .timeline {
   position: absolute;
-  left: 450px;
+  top: 150px;
+  left: 500px;
+  margin-bottom: 10px;
+}
+
+.timeline-scroller{
+  position: relative;
+  top: 20px;
+  width: 520px;
+  height: 600px;
+  overflow-y: scroll;
+  scrollbar-color: rebeccapurple green;
+  scrollbar-width: thin;
+
+}
+.timeline-user-picture{
+  width: 10%;
+
+}
+.experiment{
+  position: relative;
+  text-align: center;
+  top: 10px;
+  left: 30px;
+  width: 300px;
+}
+
+.timeline-song-letters{
+  position: relative;
+  top: 20px;
+  font-weight: bold;
+
+}
+
+.timeline-song{
+  
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+  
+ 
+  background-color: #DCDCDC;
+  border-radius: 20px;
+
+  text-align: center;
+  margin-bottom: 80px;
+  height: 200px;
+  width: 350px;
+
+
+}
+.timeline-buttons{
+  position: relative;
+  top: 20px;
+
+}
+.following-list-scroller{
+  position: relative;
+  top: 0px;
+  overflow-y: scroll;
+  height: 120px;
+  width: 280px;
+  scrollbar-color: rebeccapurple green;
+  scrollbar-width: thin;
 }
 
 .comments {
-  position: absolute;
+  position: fixed;
+
+
   width: 500px;
   right: 20px;
   top: 50px
@@ -184,7 +271,12 @@
   scrollbar-color: rebeccapurple green;
   scrollbar-width: thin;
 }
+.close-comments{
+  position: absolute;
+  right: 0px;
+  top: 0px;
 
+}
 
 
 .following-list {
@@ -200,62 +292,73 @@
 }
 .mic {
   position: absolute;
-  top: 95px;
-  left: 350px;
+  top: 145px;
+  left: 390px;
+  
+
 }
 .select {
   position: fixed;
-  left: 200px;
-  top: 100px;
+  left: 390px;
+  top: 120px;
   
 }
 .play-button {
   position: fixed;
-  left: 303px;
-  top: 160px;
+  left: 390px;
+  top: 250px;
 
 }
 .activate-sampler {
   position: fixed;
-  left: 303px;
-  top: 100px;
+  left: 440px;
+  top: 250px;
 }
 .controls {
   position: absolute;
-  width: 200px;
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+  width: 250px;
+  text-align: center;
   border-radius: 20px;
   height: 100px;
-  right: 250px;
-  top: 100px;
+  right: 80px;
+  top: 145px;
   background: #C0C0C0;
 }
 .sampler-modal {
   position: fixed;
-  left: 260px;
-  top: 100px
+  left: 345px;
+  top: 145px
 }
 
 .recorder-modal{
   position: fixed;
-  left: 260px;
-  top: 100px
+  left: 345px;
+  top: 145px
 }
 
 .playlist-modal{
   position: fixed;
-  left: 260px;
-  top: 100px
+  left: 345px;
+  top: 145px
 }
-
+/* 
 .records {
-  position: fixed;
+  position: absolute;
   left: 300px;
 
-}
+} */
 .records-edit{
-  position: fixed;
-  right: 120px;
-  top: 120px;
+  position: absolute;
+  background-color: #A9A9A9;
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+  text-align: center;
+
+  border-radius: 20px;
+  width: 250px;
+  height: 110px;
+  right: 80px;
+  top: 170px;
 
 }
 
@@ -263,6 +366,7 @@
   position: absolute;
   left: 250px;
   top: 31px;
+  
   
 }
 
@@ -272,12 +376,60 @@
   top: 31px;
 
 }
+.mic-img{
+  position: absolute;
+  left: 540px;
+}
 
 .app-name {
   position: absolute;
-  left: 540px;
-  top: 30px;
-  color: white;
-  text-shadow: 1px 1px 2px black, 0 0 25px #00FF00, 0 0 5px #00FF00;
+  font-size: 70px;
+  font-family: "Palatino Linotype", "Book Antiqua", Palatino, serif;
+  font-weight: bolder;
+  left: 460px;
+  top: 10px;
+  color: black;
+  text-shadow: 0 0 25px #00FF00;
+  text-shadow: 0px 0px 50px #00FF00;
+  text-size-adjust: 80px;
 
 }
+
+.sample-question{
+  position: absolute;
+  background-color: #A9A9A9;
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+  text-align: center;
+
+  border-radius: 20px;
+  width: 250px;
+  height: 110px;
+  right: 80px;
+  top: 170px;
+}
+
+.recorded-pattern{
+  position: relative;
+  border-radius: 20px;
+  text-align: center;
+  width: 170px;
+    float: left;
+    margin: 20px;
+
+    background-color: #C0C0C0;
+    padding: 20px;
+    left: 390px;
+    top: 70px;
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+
+}
+
+
+.tl-image{
+  position: relative;
+  top: 10px;
+  left: 50px;
+  width: 75px;
+
+}
+

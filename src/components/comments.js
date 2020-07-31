@@ -91,7 +91,9 @@ class Comments extends Component {
                 <Comment.Group>
                 <Header as='h3' dividing>
                     {this.props.selectedSong.name}
+                    <div className="close-comments">
                     <Button icon onClick={this.props.closeComments}><Icon name="times"/></Button>
+                    </div>
                 </Header>
                 <div className="comments-scroller">
 

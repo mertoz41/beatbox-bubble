@@ -12,6 +12,7 @@ class Timeline extends Component {
         timeline: [],
         selectedSong: null
     }
+   
 
     // componentDidMount(){
     //     let loggedInUser = this.props.loggedInUser
@@ -60,7 +61,7 @@ class Timeline extends Component {
         let post = time.split(':').splice(0,2).join(':')
         let ampm = time.split(':')[2].split(' ')[1]
 
-        return `${post} ${ampm} - ${date.toLocaleDateString()}`
+        return `${date.toLocaleDateString()}`
 
     }
     findUserName = (track) => {
@@ -117,14 +118,32 @@ class Timeline extends Component {
         })
         .then(resp => resp.json())
         .then(resp => {
-
-            this.props.fetchEachSong(resp.nu_comment.song_id) 
+             
+            this.props.getTimeline(this.props.loggedInUser.id)
+            let selectedSong = this.props.selectedSong
+            selectedSong.comments.push(resp.nu_comment)
+            
+             
+            this.props.showTrackComments(selectedSong)
+            // this.props.fetchEachSong(resp.nu_comment.song_id) 
 
             // this.setState({
             //     selectedSongComments: [...this.state.selectedSongComments, resp.nu_comment]
             // })
         })
         // this.trackComments(song)
+    }
+
+    getComments = (track)=>{
+        let song = track
+        let num 
+        if (song.comments){
+            num = song.comments.length
+        } else {
+            num = 0
+        }
+         
+        return num
     }
 
     shareSong = (track) =>{
@@ -134,7 +153,7 @@ class Timeline extends Component {
          
 
         
-
+        debugger 
         if (sharedVersion){
             this.unshareSong(sharedVersion, track)
         } else {
@@ -143,7 +162,7 @@ class Timeline extends Component {
             song_id: track.id,
             user_id: loggedInUser.id
         }
-
+        debugger
         fetch('http://localhost:3000/shares', {
             method: "POST",
             headers: {
@@ -153,8 +172,9 @@ class Timeline extends Component {
         })
         .then(resp => resp.json())
         .then(resp => {
-            this.props.fetchEachSong(track.id)
-            this.props.reFetchLoggedInUser(loggedInUser.id)
+            // this.props.fetchEachSong(track.id)
+            // this.props.reFetchLoggedInUser(loggedInUser.id)
+            this.props.getTimeline(this.props.loggedInUser.id)
         })
     }
     }
@@ -169,8 +189,9 @@ class Timeline extends Component {
             method: "DELETE"
         })
         .then(resp => resp.json())
-        this.props.reFetchLoggedInUser(this.props.loggedInUser.id)
         this.props.fetchEachSong(track.id)
+        this.props.reFetchLoggedInUser(this.props.loggedInUser.id)
+        this.props.getTimeline(this.props.loggedInUser.id)
     }
 
     closeComments = () =>{
@@ -199,15 +220,25 @@ class Timeline extends Component {
                         return(
                             <Feed.Event>
                             <Feed.Label>
+                            <div className="tl-image">
                             <img src={this.findUserImage(track)} />
+                            </div>
                             </Feed.Label>
+                                <div className='timeline-song'>
                             <Feed.Content>
                             <Feed.Summary>
+                                <div className="timeline-song-letters">
+
+                                
                             <Feed.User>{this.findUserName(track)}</Feed.User>: {track.name}
                             <Feed.Date>{this.getTrackDate(track)}</Feed.Date>
+                            </div>
                             </Feed.Summary>
                             <Feed.Meta>
-                            <Waveform track={track}/>
+                            <div className="experiment">
+                            <Waveform track={track} />
+                            </div>
+                            <div className="timeline-buttons">
                             <Button onClick={() => this.props.showTrackComments(track)} as='div' labelPosition='left'>
                             <Label as='a' basic>
                                 {track.comments.length}
@@ -218,17 +249,20 @@ class Timeline extends Component {
                             </Button>
                             <Button as="div" labelPosition='left' onClick={() => this.shareSong(track)}>
                                 <Label as='a' basic>
-                                    {track.share_count}
+                                    {track.shared.length}
                                 </Label>
                                 <Button icon>
                                     <Icon name='share' />
                                 </Button>
                             </Button>
+                            </div>
                             {/* <Feed.Like>
                             <Icon name='retweet' />4 Likes
                             </Feed.Like> */}
                             </Feed.Meta>
                             </Feed.Content>
+                            </div>
+
                             </Feed.Event>
                         
                         )

@@ -19,7 +19,7 @@ class Waveform extends Component{
             scrollParent: true,
             backend: 'WebAudio',
             height: 90,
-            progressColor: '#00FF00',
+            progressColor: '#98FB98',
             responsive: true,
             waveColor: '#EFEFEF',
             cursorColor: 'transparent',

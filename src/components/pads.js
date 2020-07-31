@@ -28,7 +28,7 @@ class Pads extends Component {
                     return(
                         
                         <div className="row" key={rowIndex}>
-                            <p>{Object.keys(obj)[0]}</p>
+                            <h4>{Object.keys(obj)[0]}</h4>
                             <div>
                                 <Button Icon onClick={()=> this.props.mute(rowIndex)}><Icon name={this.volumeButton(rowIndex)}/></Button>
                             </div>

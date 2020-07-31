@@ -44,6 +44,7 @@ class Sampler extends Component {
         new Audio(url).play()
     }
     deleteSample = (sampleBlob) =>{
+        debugger 
         let samples = this.state.sampleIncoming
         let updatedSamples = samples.filter((sample) => sample !== sampleBlob)
         this.setState({sampleIncoming: updatedSamples})
@@ -54,12 +55,13 @@ class Sampler extends Component {
                 <Mic recordIncome={this.recordIncome}/>
                 {this.state.sampleIncoming.map((sample) => {
                     return(
-                        <div>
+                        <div className="sample-question">
+                            <h5>Assign sample a letter</h5>
                             <Button Icon onClick={() => this.playSample(sample)}><Icon name="play"/></Button>
                             <Button Icon onClick={() => this.deleteSample(sample)}><Icon name="trash alternate"/></Button>
                             <form onSubmit={event => this.saveSample(event)}>
                                 <input value={this.state.sampleName} placeholder="Assign sample here" onChange={event => this.fixState(event)} maxLength="1"/>
-                                <button>save sampler</button>
+                                <Button type="submit"><Icon name="plus"/></Button>
                             </form>
 
                             </div>

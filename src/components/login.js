@@ -55,9 +55,11 @@ class Login extends Component {
                 <Grid textAlign='center' style={{ height: '100vh' }} verticalAlign='middle'>
     <Grid.Column style={{ maxWidth: 450 }}>
     <h1>Beatbox Bubble</h1>
+    <div className="login-icon">
     <Icon.Group size='big'>
-    <Icon size='big' name='microphone' color="green"/>
+    <Icon size='big' name='microphone'/>
   </Icon.Group>
+  </div>
       <Header as='h2' color='black' textAlign='center'>
      
         Log in to your account

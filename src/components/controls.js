@@ -7,10 +7,10 @@ const Controls = (props) => {
 
     return (
         <div className='controls'>
-            <p>Sequence Player</p>
+            <h3>Sequence Player</h3>
             <Button Icon onClick={()=> props.togglePlaying()}><Icon name={buttonText}/></Button>
-            <button onClick={()=> props.addPad()}>Add</button>
-            <button onClick={()=> props.removePad()}>Remove</button>
+            <Button onClick={()=> props.addPad()}><Icon name="plus"/></Button>
+            <Button onClick={()=> props.removePad()}><Icon name="minus" /></Button>
             <div className="bpm">
             <label>BPM:</label>
             <input 

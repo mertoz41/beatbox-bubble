@@ -25,12 +25,14 @@ class TrackPlayer extends Component{
 
     exportTrack = (event) =>{
         event.preventDefault()
+        let track = this.props.recordedTrack
         let name = this.state.trackName
-        let trackObj = {
-            [name]: this.props.recordedTrack
-        } 
+        track.name = name
+        
+
+        debugger 
          
-        this.props.postTrack(trackObj)
+        this.props.postTrack(track)
     }
     // render(){
     //     return(
@@ -47,6 +49,7 @@ class TrackPlayer extends Component{
     render(){
             return(
                 <div className="trackPlayer">
+                    <h3>Export track</h3>
                     <Button icon onClick={this.playTrack}><Icon name="play"/></Button>
                     <Button icon onClick={this.resetState}><Icon name="trash alternate"/></Button>
                     <form>

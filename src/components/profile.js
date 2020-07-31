@@ -1,9 +1,11 @@
 import React,{Component} from 'react'
 import Navbar from './Navbar'
-import { Button, Icon, Card, Image} from 'semantic-ui-react'
 import Followmenu from './followmenu'
 import Waveform from './waveform'
 import WaveSurfer from 'wavesurfer.js';
+import { Button, Feed, Icon, Label, Card, Image} from 'semantic-ui-react'
+
+
 
 
 
@@ -23,6 +25,17 @@ class Profile extends Component{
         })
     }
 
+    getTrackDate = (track) =>{
+         
+        let date = new Date(track.created_at)
+        let time = date.toLocaleTimeString()
+
+        let post = time.split(':').splice(0,2).join(':')
+        let ampm = time.split(':')[2].split(' ')[1]
+
+        return `${date.toLocaleDateString()}`
+
+    }
     
     showFollowers = () =>{
         this.setState({
@@ -95,19 +108,22 @@ class Profile extends Component{
         
         let loggedInUser = this.props.loggedInUser.username
         let selectedUser = this.props.selectedUser.username
+        let found = this.props.loggedInUser.follows.find((followObj) => followObj.followed_id == this.props.selectedUser.id)
+
+
         let followButton
          
-        if (this.props.followingList.includes(this.props.selectedUser.id)){
+        if (found){
             followButton = "Unfollow"
         } else {
             followButton = "Follow"
         }
         return(
             <div>
-                <Navbar toLoggedInUserProfile={this.props.toLoggedInUserProfile} logUserOut={this.props.logUserOut} backToTimeline={this.props.backToTimeline} searchedUser={this.props.searchedUser} users={this.props.users} loggedInUser={this.props.loggedInUser} startMachine={this.props.startMachine}/>
+                <Navbar getTimeline={this.props.getTimeline}toLoggedInUserProfile={this.props.toLoggedInUserProfile} logUserOut={this.props.logUserOut} backToTimeline={this.props.backToTimeline} searchedUser={this.props.searchedUser} users={this.props.users} loggedInUser={this.props.loggedInUser} startMachine={this.props.startMachine}/>
                 <div className="profile-card">
                 <Card>
-                    <Image src={userImage}/>
+                    <Image src={userImage} width="300" height="300"/>
                     {loggedInUser == selectedUser ?
                     null
                     :
@@ -118,31 +134,46 @@ class Profile extends Component{
                     </Card.Content>
                  </Card>
                  {loggedInUser == selectedUser ?
-                 <Followmenu followingList={this.props.followingList} followersList={this.props.followersList} users={this.props.users}/>
+                 <Followmenu selectedUser={this.props.selectedUser} followingList={this.props.followingList} followersList={this.props.followersList} users={this.props.users}/>
                  :
                 //  null
-                 <Followmenu followingList={this.props.searchedUserFollowingList} followersList={this.props.searchedUserFollowersList} users={this.props.users}/>
+                 <Followmenu selectedUser={this.props.selectedUser} followingList={this.props.searchedUserFollowingList} followersList={this.props.searchedUserFollowersList} users={this.props.users}/>
                  
                 }
                 </div>
                  
 
                     <div className="user-tracks">
+                    <div className="profile-sections">
+                        <h3>{this.props.selectedUser.username}'s tracks</h3>
+                        </div>
                     <div className="scroller-user-songs">
+                        <Feed>
                     {this.props.selectedUser.songs.map((track) => {
                         return(
+                            <Feed.Event>
+                            <Feed.Content>
                         <div className="user-song">
                             <div className="track-name">
                             <h4>{track.name}</h4>
                             </div>
+                            <Feed.Summary>
+                            <Feed.Date>{this.getTrackDate(track)}</Feed.Date>
+                            </Feed.Summary>
                             <Waveform track={track} />
                             {/* <div id={"wave-" + this.toString(track.id)}/> */}  
                         </div>
+                        </Feed.Content>
+                        </Feed.Event>
                         )
                     })}
+                    </Feed>
                     </div>
                     </div>
                     <div className="user-shared-tracks">
+                        <div className="profile-sections">
+                    <h3>{this.props.selectedUser.username}'s shared tracks</h3>
+                    </div>
                     <div className="scroller-user-shared-songs">
 
 

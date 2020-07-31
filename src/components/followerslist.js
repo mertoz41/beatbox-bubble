@@ -3,9 +3,8 @@ import {Feed} from 'semantic-ui-react'
 
 class Followerslist extends Component{
     getUsername =(id) =>{
-        let userId = id 
         let users = this.props.users
-        let found = users.find(user => user.id == userId)
+        let found = users.find(user => user.id == id)
         return found.username 
     }
     getPicture = (id) => {
@@ -16,16 +15,16 @@ class Followerslist extends Component{
     }
     render(){
         return(
-            <div>
+            <div className="following-list-scroller">
                 <Feed>
-                {this.props.followersList.map((id) => {
+                {this.props.selectedUser.followed_by.map((followObj) => {
                     return(
                         <Feed.Event>
                         <Feed.Label>
-                            <img src={this.getPicture(id)} />
+                            <img src={this.getPicture(followObj.follower_id)} />
                         </Feed.Label>
                         <Feed.User>
-                        {this.getUsername(id)}
+                        {this.getUsername(followObj.follower_id)}
                         </Feed.User>
                         </Feed.Event>
                     )

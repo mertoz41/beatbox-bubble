@@ -2,6 +2,7 @@ import React,{Component} from 'react'
 import { Search, Grid, Button, Icon  } from 'semantic-ui-react'
 import { withRouter } from "react-router";
 import { Redirect } from 'react-router-dom';
+import mics from '../pictures/mics.png'
 
 
 
@@ -64,8 +65,8 @@ class Navbar extends Component{
                 <Grid.Column width={3}>
                 <Search placeholder="Search beatboxers" onResultSelect={event => this.selectedUser(event)} results={this.state.boxers} value={this.state.searching} onSearchChange={event => this.fixState(event)}/>
                 </Grid.Column>
-                <div className="app-name">
-                    <h1>Beatbox Bubble</h1>
+                <div className="mic-img">
+                    <img src={mics} width="300"/>
                 </div>
                 <div className="home-button">
                 <Button icon onClick={this.timelineRedirect}><Icon name="globe"/></Button>

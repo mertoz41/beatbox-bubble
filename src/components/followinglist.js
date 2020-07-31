@@ -4,13 +4,15 @@ import {Feed } from 'semantic-ui-react'
 
 class Followinglist extends Component {
     getUsername =(id) =>{
-        let userId = id 
+         
+       
         let users = this.props.users
-        let found = users.find(user => user.id == userId)
+        let found = users.find(user => user.id == id)
          
         return found.username 
     }
     getPicture = (id) => {
+         
         let users = this.props.users
         let found = users.find((user) => user.id == id)
         let userImage = require(`../pictures/${found.username}.png`)
@@ -18,18 +20,18 @@ class Followinglist extends Component {
     }
     render(){
         return(
-            <div>
+            <div className="following-list-scroller">
                 <Feed>
               
                 
-                {this.props.followingList.map((id) => {
+                {this.props.selectedUser.follows.map((followObj) => {
                     return(
                         <Feed.Event>
                         <Feed.Label>
-                            <img src={this.getPicture(id)} />
+                            <img src={this.getPicture(followObj.followed_id)} />
                         </Feed.Label>
                         <Feed.User>
-                        {this.getUsername(id)}
+                        {this.getUsername(followObj.followed_id)}
                         </Feed.User>
                         </Feed.Event>
         

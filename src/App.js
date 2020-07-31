@@ -17,8 +17,6 @@ class App extends Component {
     session: false,
     users: [],
     searchedUser: null,
-    followingList: [],
-    followersList: [],
     loggedInUserSharedSongsList: [],
     loggedInUserSharedSongsIds: [],
     searchedUserFollowingList: [],
@@ -42,13 +40,21 @@ class App extends Component {
     fetch(`http://localhost:3000/timeline/${id}`)
         .then(resp => resp.json())
         .then(resp => {
-             
-            resp.tl_tracks.forEach((song) => {
-                this.fetchEachSong(song.id)
-            })
+          resp.tl_tracks.forEach((track) => {
+            if (!track.shared){
+              track.shared = []
+            }
+          }) 
+
+          debugger 
+          this.setState({timeline: resp.tl_tracks})
+            // resp.tl_tracks.forEach((song) => {
+            //     this.fetchEachSong(song.id)
+            // })
             
         })
   }
+
 
   toLoggedInUserProfile = (user) =>{
     this.setState({searchedUser: user})
@@ -66,6 +72,9 @@ class App extends Component {
               
             let filtered = this.state.timeline.filter((song) => song.id !== resp.song.id)
             filtered.push(resp.song)
+            let sortedFiltered = filtered.sort((a,b) => b.created_at - a.created_at)
+            debugger 
+             
 
              
             this.setState({
@@ -78,14 +87,14 @@ class App extends Component {
 
   createSelectedUser = (user) =>{
     let preLoggedInUser = this.state.loggedInUser
-    debugger 
+     
 
-    if (user.id === preLoggedInUser.id) {
-      this.setState({
-        loggedInUser: user,
-        searchedUser: user
-      })
-    } else {
+    // if (user.id === preLoggedInUser.id) {
+    //   this.setState({
+    //     loggedInUser: user,
+    //     searchedUser: user
+    //   })
+    // } else {
     //   let userObj = {}
     //   userObj["id"] = user.id
     //   userObj["username"] = user.username
@@ -127,9 +136,10 @@ class App extends Component {
       }
       
 
-  }
+  
 
   showTrackComments = (track) =>{
+     
     this.setState({selectedSong: track})
   }
 
@@ -137,17 +147,22 @@ class App extends Component {
 
      
 
-    if (user === this.state.loggedInUser){
-      this.reFetchLoggedInUser(user.id)
-    } else {
+    // if (user === this.state.loggedInUser){
+    //   this.reFetchLoggedInUser(user.id)
+    // } else {
 
     let id = user.id
     let userObj = {}
     fetch(`http://localhost:3000/users/${id}`)
     .then(resp => resp.json())
     .then(resp => {
+       
+      this.setState({
+        searchedUser: resp.user,
+        timeline: []
+      })
      
-      this.createSelectedUser(resp.user)
+      // this.createSelectedUser(resp.user)
        
      
       // userObj["id"] = resp.user.id
@@ -175,22 +190,41 @@ class App extends Component {
       //    searchedUserSharedSongsList: searchedUserSharedSongsList
       //   })
       
-    })
-  }
+    // })
+  // }
      
-  }
+    })  
+}
+
+addNewSong = (song) =>{
+  let loggedInUser = this.state.loggedInUser
+  loggedInUser.songs.unshift(song)
+  let timeline = this.state.timeline
+  let forTl = song 
+  debugger 
+  forTl.comments = []
+  forTl.shared = []
+  timeline.unshift(forTl)
+  this.setState({
+    loggedInUser: loggedInUser,
+    timeline: timeline
+  })
+  this.exitMachine()
+
+}
 
   followUser = (user) =>{
-    let experiment = user 
     let loggedInUserFollows = this.state.loggedInUser.follows
-    let found = loggedInUserFollows.find((followObj) => followObj.followed_id == user.id )
-    if (found) {
-      this.unfollowUser(found)
+    let foundFollowObj = loggedInUserFollows.find((followObj) => followObj.followed_id == user.id )
+    // followed_id is the action person
+ 
+    if (foundFollowObj) {
+      this.unfollowUser(foundFollowObj)
     } else {
 
     
 
-    debugger 
+     
     // let searchedUser = {
     //   id: user.id,
     //   username: user.username
@@ -225,56 +259,57 @@ class App extends Component {
     //   followingList: [...this.state.followingList, followed_id]
     // })
     this.searchedUser(user)
-    this.reFetchLoggedInUser(follower_id)
+    this.reFetchLoggedInUser(this.state.loggedInUser.id)
+    // this.reFetchLoggedInUser(follower_id)
   }
   }
   closeComments = () =>{
     this.setState({selectedSong: null})
   }
 
-  unfollowUser = (user) =>{
+  unfollowUser = (obj) =>{
+    let unfollowedUser = this.state.users.find((user) => user.id == obj.followed_id)
 
     
-    let loggedInUser = this.state.loggedInUser
-    debugger 
-    let loggedInUserUsername = this.state.loggedInUser.username
-    let searchedUser = {
-      id: user.id,
-      username: user.username
-    }
+    // let loggedInUser = this.state.loggedInUser
+    // debugger 
+    // let loggedInUserUsername = this.state.loggedInUser.username
+    // let searchedUser = {
+    //   id: user.id,
+    //   username: user.username
+    // }
     
     
-    let id = user.id 
-    let list = this.state.followingList
-    let updated = list.filter((id) => id !== id)
-    let found = loggedInUser.follows.find((user) => user.followed_id == id)
+    // let id = user.id 
+    // let list = this.state.followingList
+    // let updated = list.filter((id) => id !== id)
+    // let found = loggedInUser.follows.find((user) => user.followed_id == id)
      
-    fetch(`http://localhost:3000/follows/${found.id}`, {
+    fetch(`http://localhost:3000/follows/${obj.id}`, {
       method: "DELETE"
     })
     .then(resp => resp.json())
     .then(console.log)
-    this.setState({followingList: updated})
-    this.searchedUser(searchedUser)
-    this.updateLoggedInUser(loggedInUser.id)
+    this.searchedUser(unfollowedUser)
+    this.reFetchLoggedInUser(this.state.loggedInUser.id)
   }
 
-  updateLoggedInUser = (id) =>{
-    fetch(`http://localhost:3000/users/${id}`)
-    .then(resp => resp.json())
-    .then(resp => { 
-      let followList = []
-      let followedList = []
-          resp.user.follows.forEach((user) => followList.push(user.followed_id))
-          resp.user.followed_by.forEach((user) => followedList.push(user.follower_id))
-          this.setState({
-            loggedInUser: resp.user,
-            followingList: followList,
-            followersList: followedList
-          })
-    })
+  // updateLoggedInUser = (id) =>{
+  //   fetch(`http://localhost:3000/users/${id}`)
+  //   .then(resp => resp.json())
+  //   .then(resp => { 
+  //     let followList = []
+  //     let followedList = []
+  //         resp.user.follows.forEach((user) => followList.push(user.followed_id))
+  //         resp.user.followed_by.forEach((user) => followedList.push(user.follower_id))
+  //         this.setState({
+  //           loggedInUser: resp.user,
+  //           followingList: followList,
+  //           followersList: followedList
+  //         })
+  //   })
     
-  }
+  // }
 
   
 
@@ -294,27 +329,22 @@ class App extends Component {
           this.getTimeline(resp.user.id)
            
            
-          let followList = []
-          let followedList = []
-          let loggedInUserSongs =[]
-          let loggedInUserSharedSongsList = []
-          let loggedInUserSharedSongsIds = []
-          resp.user.follows.forEach((user) => followList.push(user.followed_id))
-          resp.user.followed_by.forEach((user) => followedList.push(user.follower_id))
-          resp.sharedsongswithcounts.forEach((song) => loggedInUserSharedSongsList.push(song))
-          resp.user.sharedsongs.forEach((song) => loggedInUserSharedSongsIds.push(song.id))
-          resp.user.songs.forEach((song) => loggedInUserSongs.push(song))
+          // let followList = []
+          // let followedList = []
+          // let loggedInUserSongs =[]
+          // let loggedInUserSharedSongsList = []
+          // let loggedInUserSharedSongsIds = []
+          // resp.user.follows.forEach((user) => followList.push(user.followed_id))
+          // resp.user.followed_by.forEach((user) => followedList.push(user.follower_id))
+          // resp.sharedsongswithcounts.forEach((song) => loggedInUserSharedSongsList.push(song))
+          // resp.user.sharedsongs.forEach((song) => loggedInUserSharedSongsIds.push(song.id))
+          // resp.user.songs.forEach((song) => loggedInUserSongs.push(song))
           
           
            
           
           this.setState({
-            loggedInUser: resp.user,
-            loggedInUserSongs: loggedInUserSongs,
-            followingList: followList,
-            followersList: followedList,
-            loggedInUserSharedSongsList: loggedInUserSharedSongsList,
-            loggedInUserSharedSongsIds: loggedInUserSharedSongsIds
+            loggedInUser: resp.user
           })
         })
   }
@@ -325,11 +355,10 @@ class App extends Component {
   backToTimeline = () => {
     this.setState({
       searchedUser: null,
-      searchedUserFollowersList: [],
-      searchedUserFollowingList: [],
-      searchedUserSharedSongsIds: [],
-      session: false
+      session: false,
+      selectedSong: null
     })
+    this.getTimeline(this.state.loggedInUser.id)
      
   }
 
@@ -344,8 +373,9 @@ class App extends Component {
   fetch(`http://localhost:3000/users/${id}`)
   .then(resp => resp.json())
   .then(resp => {
+    this.setState({loggedInUser: resp.user})
+  })
      
-    this.createSelectedUser(resp.user)})
 
 }
 
@@ -386,7 +416,7 @@ class App extends Component {
             />
           <Route exact path="/timeline" render={() =>
               this.state.loggedInUser ? 
-              <Timeline toLoggedInUserProfile={this.toLoggedInUserProfile}closeComments={this.closeComments} selectedSong={this.state.selectedSong} showTrackComments={this.showTrackComments} timeline={this.state.timeline} fetchEachSong={this.fetchEachSong} logUserOut={this.logUserOut} backToTimeline={this.backToTimeline} reFetchLoggedInUser={this.reFetchLoggedInUser} loggedInUserSharedSongsIds={this.state.loggedInUserSharedSongsIds} loggedInUserSharedSongsList={this.state.loggedInUserSharedSongsList} selectedUser={this.state.searchedUser} searchedUser={this.searchedUser} users={this.state.users} startMachine={this.startMachine} loggedInUser={this.state.loggedInUser} />
+              <Timeline getTimeline={this.getTimeline} toLoggedInUserProfile={this.toLoggedInUserProfile}closeComments={this.closeComments} selectedSong={this.state.selectedSong} showTrackComments={this.showTrackComments} timeline={this.state.timeline} fetchEachSong={this.fetchEachSong} logUserOut={this.logUserOut} backToTimeline={this.backToTimeline} reFetchLoggedInUser={this.reFetchLoggedInUser} loggedInUserSharedSongsIds={this.state.loggedInUserSharedSongsIds} loggedInUserSharedSongsList={this.state.loggedInUserSharedSongsList} selectedUser={this.state.searchedUser} searchedUser={this.searchedUser} users={this.state.users} startMachine={this.startMachine} loggedInUser={this.state.loggedInUser} />
               :
               <Redirect to="/login" />
               }
@@ -401,7 +431,7 @@ class App extends Component {
 
           <Route exact path="/machine" render={() => 
               this.state.session ? 
-              <Machine  toLoggedInUserProfile={this.toLoggedInUserProfile} exitMachine={this.exitMachine} logUserOut={this.logUserOut} backToTimeline={this.backToTimeline} searchedUser={this.searchedUser} users={this.state.users} loggedInUser={this.state.loggedInUser} startMachine={this.startMachine}/>
+              <Machine  addNewSong={this.addNewSong} toLoggedInUserProfile={this.toLoggedInUserProfile} exitMachine={this.exitMachine} logUserOut={this.logUserOut} backToTimeline={this.backToTimeline} searchedUser={this.searchedUser} users={this.state.users} loggedInUser={this.state.loggedInUser} startMachine={this.startMachine}/>
               :
               <Redirect to="/login" />
               }
