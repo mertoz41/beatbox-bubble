@@ -14,8 +14,63 @@ class Profile extends Component{
         userTracks: [],
         showFollowingList: false,
         showFollowersList: false,
-        playing: false 
+        playing: false,
+        followedByLoggedInUser: false
     }
+
+    componentDidMount(){
+        let loggedInUserFollowingList = this.props.loggedInUser.follows
+        let selectedUser = this.props.selectedUser
+        let found = loggedInUserFollowingList.find(follower => follower.followed_id == selectedUser.id)
+        if (found){
+            this.setState({followedByLoggedInUser: true})
+        }
+
+        // loggedinuser needs to be fetched inorder to get the updated follows list
+        // following follows section on profile component needs to get updated as loggedinuser follows or unfollows the user.
+        
+    }
+
+    componentWillUnmount(){
+
+    }
+
+ 
+
+    followUser = (selectedUser) =>{
+
+        let followed_id = this.props.selectedUser.id
+        let follower_id = this.props.loggedInUser.id
+        let followObj = {
+            followed: followed_id,
+            follower: follower_id
+    }
+
+
+    fetch('http://localhost:3000/follows', {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        followObj
+      })
+    })
+    .then(resp => resp.json())
+    .then(console.log)
+    }
+
+    unfollowUser = () =>{
+        let loggedInUser = this.props.loggedInUser
+        let followObj = loggedInUser.follows.find(obj => obj.followed_id == this.props.selectedUser.id)
+
+        fetch(`http://localhost:3000/follows/${followObj.id}`, {
+        method: "DELETE"
+        })
+        .then(resp => resp.json())
+        .then(console.log)
+    }
+
 
 
 
@@ -34,6 +89,27 @@ class Profile extends Component{
         let ampm = time.split(':')[2].split(' ')[1]
 
         return `${date.toLocaleDateString()}`
+
+    }
+
+    followFunction = (user) =>{
+        let userInstance = user
+    
+        if (this.state.followedByLoggedInUser){
+            this.setState({
+                followedByLoggedInUser: false
+            })
+            console.log("user to be unfollowed")
+            this.unfollowUser()
+            // unfollow user 
+        } else {
+            this.setState({
+                followedByLoggedInUser: true
+            })
+            console.log("user to be followed")
+            this.followUser()
+            // follow user 
+        }
 
     }
     
@@ -113,7 +189,7 @@ class Profile extends Component{
 
         let followButton
          
-        if (found){
+        if (this.state.followedByLoggedInUser){
             followButton = "Unfollow"
         } else {
             followButton = "Follow"
@@ -127,7 +203,7 @@ class Profile extends Component{
                     {loggedInUser == selectedUser ?
                     null
                     :
-                    <Button onClick={() => this.props.followUser(this.props.selectedUser)}>{followButton}</Button>
+                    <Button onClick={() => this.followFunction(this.props.selectedUser)}>{followButton}</Button>
                     }
                     <Card.Content>
                     <Card.Header>{this.props.selectedUser.username}</Card.Header>

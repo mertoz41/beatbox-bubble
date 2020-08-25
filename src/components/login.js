@@ -19,33 +19,25 @@ class Login extends Component {
     
     login = (event) =>{
       event.preventDefault()
-      let user = {
-        username: this.state.username,
-        password: this.state.password
-      }
-      this.props.logUser(user)
-
-
-       
-         
-     
-        // fetch('http://localhost:3000/login', {
-        //   method: "POST",
-        //   headers: {
-        //     "Content-Type": "application/json",
-        //     "Accept" : "application/json"
-        //   },
-        //   body: JSON.stringify(this.state)
-        // })
-        // .then(resp => resp.json())
-        // .then(resp => {
-        //     if(resp.user){
-        //         this.props.logUser(resp.user)
-        //     } else {
-        //         alert(resp.message)
-        //     }
+        fetch('http://localhost:3000/login', {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "Accept" : "application/json"
+          },
+          body: JSON.stringify(this.state)
+        })
+        .then(resp => resp.json())
+        .then(resp => {
+           
+            if(resp.user){
+                this.props.logUser(resp.user)
+                localStorage.setItem('jwt', resp.token)
+            } else {
+                alert(resp.message)
+            }
              
-        // })
+        })
     }
 
 

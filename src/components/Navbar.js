@@ -52,6 +52,7 @@ class Navbar extends Component{
     }
 
     logOut = () =>{
+        localStorage.clear()
         this.props.history.push('/login')
         this.props.logUserOut()
 

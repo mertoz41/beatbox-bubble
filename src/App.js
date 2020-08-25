@@ -29,11 +29,32 @@ class App extends Component {
 }
 
   componentDidMount(){
+    this.fetchUsers()
+    if (localStorage.getItem('jwt')){
+      this.checkJwt()
+    }    
+  }
+
+  fetchUsers = () =>{
     fetch('http://localhost:3000/users')
     .then(resp => resp.json())
     .then(resp => {
       this.setState({users: resp})
     })
+  }
+
+  checkJwt = () =>{
+    
+      fetch('http://localhost:3000/check', {
+        method: 'GET',
+        headers: {
+          "Authentication": localStorage.getItem('jwt')
+        }
+      })
+      .then(resp => resp.json())
+      .then(resp => {
+        this.logUser(resp.user)
+      })
   }
 
   getTimeline = (id) =>{
@@ -46,7 +67,7 @@ class App extends Component {
             }
           }) 
 
-          debugger 
+           
           this.setState({timeline: resp.tl_tracks})
             // resp.tl_tracks.forEach((song) => {
             //     this.fetchEachSong(song.id)
@@ -314,39 +335,8 @@ addNewSong = (song) =>{
   
 
   logUser =(user)=>{
-     
-
-    fetch('http://localhost:3000/login', {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            "Accept" : "application/json"
-          },
-          body: JSON.stringify(user)
-        })
-        .then(resp => resp.json())
-        .then(resp => {
-          this.getTimeline(resp.user.id)
-           
-           
-          // let followList = []
-          // let followedList = []
-          // let loggedInUserSongs =[]
-          // let loggedInUserSharedSongsList = []
-          // let loggedInUserSharedSongsIds = []
-          // resp.user.follows.forEach((user) => followList.push(user.followed_id))
-          // resp.user.followed_by.forEach((user) => followedList.push(user.follower_id))
-          // resp.sharedsongswithcounts.forEach((song) => loggedInUserSharedSongsList.push(song))
-          // resp.user.sharedsongs.forEach((song) => loggedInUserSharedSongsIds.push(song.id))
-          // resp.user.songs.forEach((song) => loggedInUserSongs.push(song))
-          
-          
-           
-          
-          this.setState({
-            loggedInUser: resp.user
-          })
-        })
+    this.setState({ loggedInUser: user })
+    this.getTimeline(user.id)
   }
 
   startMachine = () =>{
