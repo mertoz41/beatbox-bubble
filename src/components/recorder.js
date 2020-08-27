@@ -14,7 +14,7 @@ class Recorder extends Component{
         }
 
     resetState = () =>{
-        this.setState({recordName: "", records: []})
+        this.setState({recordName: ""})
     }
 
     recordIncome = (record) =>{
@@ -58,9 +58,11 @@ class Recorder extends Component{
     }
     exportTrack = (event, pattern) =>{
         let records = this.state.records
-
+        
         let foundRecord = records.find((record) => record.blobURL == Object.values(pattern)[0])
         foundRecord.name = Object.keys(pattern)[0]
+        debugger 
+
 
 
         

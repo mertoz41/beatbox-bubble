@@ -269,7 +269,7 @@ class Machine extends Component {
         formData.append("id", id)
         formData.append("track", trackBlob)
         formData.append("name", trackName)
-          
+        debugger 
          
         fetch('http://localhost:3000/songs', {
           method: "POST",

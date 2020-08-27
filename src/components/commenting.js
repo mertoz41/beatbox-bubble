@@ -23,7 +23,7 @@ class Commenting extends Component{
     }
     render(){
         return(
-            <div>
+            <div className="commenting-box">
                 <Form reply onSubmit={event => this.postComment(event)}>
                 <Form.TextArea placeholder="comment goes here" onChange={event => this.fixState(event)} value={this.state.comment}/>
                 <Button content='Add Comment' labelPosition='left' icon='edit' primary />

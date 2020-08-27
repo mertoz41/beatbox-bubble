@@ -37,6 +37,10 @@ class Explore extends Component{
         return(
             <div>
                 <div className="explore">
+                <div className="explore-writing">
+                <h3>Explore</h3>
+                </div>
+                <div className="timeline-scroller">
                     <Feed>
                     {this.props.exploreSongs.map((track) =>{
                         return(
@@ -57,7 +61,7 @@ class Explore extends Component{
                             </div>
                             </Feed.Summary>
                             <Feed.Meta>
-                            <div className="experiment">
+                            <div className="explore-bubble">
                             <Waveform track={track} />
                             </div>
                             <div className="timeline-buttons">
@@ -73,7 +77,7 @@ class Explore extends Component{
                             }
                             </Button>
                             </Button> */}
-                            <Button as="div" labelPosition='left' onClick={() => this.shareSongFunc(track)}>
+                            <Button as="div" labelPosition='left'>
                                 <Label as='a' basic>
                                     {track.shares.length}
                                 </Label>
@@ -94,6 +98,7 @@ class Explore extends Component{
                         )
                     })}
                     </Feed>
+                    </div>
                 </div>
             </div>
         )

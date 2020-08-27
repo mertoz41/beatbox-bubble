@@ -14,7 +14,7 @@ class Timeline extends Component {
         selectedSong: null,
         loggedInUserShares: [],
         loggedInUserSharedSongs: [],
-        songNames: [],
+        sharedSongNames: [],
         exploreSongs: []
     }
 
@@ -27,7 +27,7 @@ class Timeline extends Component {
         let namesList = loggedInUser.sharedsongs.map(song => song.name)
          
          
-        this.setState({loggedInUserShares: loggedInUser.shares, loggedInUserSharedSongs: loggedInUser.sharedsongs, songNames: namesList})
+        this.setState({loggedInUserShares: loggedInUser.shares, loggedInUserSharedSongs: loggedInUser.sharedsongs, sharedSongNames: namesList})
 
         // timeline needs to be sorted from recent to oldest. 
 
@@ -60,8 +60,16 @@ class Timeline extends Component {
             //       track.shared = []
             //     }
             //   }) 
-     
-              this.setState({timeline: resp.tl_tracks})
+             
+            resp.tl_tracks.sort((a, b) => {
+                let keyA = new Date(a.created_at), keyB = new Date(b.created_at);
+                if (keyA < keyB) return -1;
+                if (keyA > keyB) return 1;
+                return 0 
+                })
+            let ordered = resp.tl_tracks.reverse()
+             
+              this.setState({timeline: ordered})
                 // resp.tl_tracks.forEach((song) => {
                 //     this.fetchEachSong(song.id)
                 // })
@@ -222,13 +230,13 @@ class Timeline extends Component {
             let found = timeline.find(song => song == track)
             found.shared.push(resp.shared_obj)
             timeline.splice(timeline.indexOf(track), 1, found) 
-            let songsList = this.state.songNames
+            let songsList = this.state.sharedSongNames
             songsList.push(track.name)
             this.setState({
                 loggedInUserShares: [...this.state.loggedInUserShares, resp.shared_obj],
                 loggedInUserSharedSongs: [...this.state.loggedInUserSharedSongs, resp.shared_song],
                 timeline: timeline,
-                songNames: songsList
+                sharedSongNames: songsList
             })
             // need to update the shared songs shared prop in timeline as well
             // resp.shared_obj to be added on found.shared
@@ -246,13 +254,15 @@ class Timeline extends Component {
 
         let filteredShares = loggedInUserShares.filter(share => share.sharedsong_id !== sharedV.id)
         let filteredSharedSongs = loggedInUserSharedSongs.filter(song => song.id !== sharedV.id)
-        let filteredSongShares = track.shared.filter(song => song.sharedsong_id !== sharedV.id)
+         
+        let filteredSongShares = track.shared.filter(song => song.user_id !== this.props.loggedInUser.id)
+         
         track.shared = filteredSongShares
         let updatedTrack = track
         let timeline = this.state.timeline
         timeline.splice(timeline.indexOf(track), 1, updatedTrack)
-        let filteredSongNames = this.state.songNames.filter(song => song !== track.name)
-        this.setState({timeline: timeline, songNames: filteredSongNames})
+        let filteredSongNames = this.state.sharedSongNames.filter(song => song !== track.name)
+        this.setState({timeline: timeline, sharedSongNames: filteredSongNames})
          
 
          
@@ -298,6 +308,10 @@ class Timeline extends Component {
                 <Navbar toLoggedInUserProfile={this.props.toLoggedInUserProfile} logUserOut={this.props.logUserOut} backToTimeline={this.props.backToTimeline} searchedUser={this.props.searchedUser} users={this.props.users} loggedInUser={this.props.loggedInUser} startMachine={this.props.startMachine}/>
                 <Explore users={this.props.users} exploreSongs={this.state.exploreSongs}/>
                 <div className="timeline">
+                <div className="timeline-writing">
+                <h3>Timeline</h3>
+                </div>
+                    <div className="timeline-scroller">
                     <Feed>
                     {this.state.timeline.map((track) =>{
                         return(
@@ -339,7 +353,7 @@ class Timeline extends Component {
                                     {track.shared.length}
                                 </Label>
                                 <Button icon>
-                                    {this.state.songNames.includes(track.name) ?
+                                    {this.state.sharedSongNames.includes(track.name) ?
                                     <Icon name='bookmark' />
                                     :
                                     <Icon name="bookmark outline" />
@@ -359,6 +373,7 @@ class Timeline extends Component {
                         )
                     })}
                     </Feed>
+                    </div>
                 </div>
                 {this.state.selectedSong ?
                 <Comments closeComments={this.closeComments} postComment={this.postComment} allUsers={this.props.users} loggedInUser={this.props.loggedInUser} selectedSong={this.state.selectedSong}/>

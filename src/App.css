@@ -112,6 +112,26 @@
 
 }
 
+.timeline-writing{
+  position: relative;
+  text-align: center;
+  top: 00px;
+  width: 350px;
+  left: 35px;
+  background-image: linear-gradient(#00FA9A, #98FB98);
+  border-radius: 20px;
+}
+
+.explore-writing{
+  position: fixed;
+  text-align: center;
+  top: 180px;
+  width: 350px;
+  left: 75px;
+  background-image: linear-gradient(#00FA9A, #98FB98);
+  border-radius: 20px;
+}
+
 .user-tracks {  
 
   position: absolute;
@@ -175,8 +195,9 @@
 
 .singlewaveform {
   position: absolute;
-  bottom: 0px;
-  left: 120px;
+  top: 70px;
+  left: 160px;
+
 
 }
 .track-name{
@@ -191,24 +212,31 @@
 }
 
 .timeline {
-  position: absolute;
-  top: 150px;
+  position: relative;
+  top: 60px;
   left: 500px;
   margin-bottom: 10px;
 }
 
 .explore {
   position: absolute;
-  top: 150px;
+  top: 200px;
   left: 40px;
   margin-bottom: 10px;
+}
+.explore-bubble {
+  position: relative;
+}
+.song-name{
+  color: linear-gradient(#00FA9A, #98FB98)
+
 }
 
 .timeline-scroller{
   position: relative;
   top: 20px;
-  width: 520px;
-  height: 600px;
+  width: 420px;
+  height: 500px;
   overflow-y: scroll;
   scrollbar-color: rebeccapurple green;
   scrollbar-width: thin;
@@ -220,10 +248,9 @@
 }
 .experiment{
   position: relative;
-  text-align: center;
-  top: 10px;
-  left: 30px;
-  width: 300px;
+  top: 0px;
+  left: 00px;
+  height: 100px;
 }
 
 .timeline-song-letters{
@@ -264,12 +291,17 @@
 }
 
 .comments {
-  position: fixed;
-
-
-  width: 500px;
+  position: absolute;
+  height: 200px;
+  width: 450px;
   right: 20px;
-  top: 50px
+  top: 90px
+}
+.commenting-box{
+  position: relative;
+  bottom: 70px;
+  text-align: center;
+
 }
 .comments-scroller {
   width: 500px;

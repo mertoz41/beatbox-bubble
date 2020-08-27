@@ -60,6 +60,8 @@ class App extends Component {
             }
           }) 
 
+          debugger 
+
            
           this.setState({timeline: resp.tl_tracks})
             // resp.tl_tracks.forEach((song) => {
