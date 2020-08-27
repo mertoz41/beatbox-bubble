@@ -17,14 +17,14 @@ class Followerslist extends Component{
         return(
             <div className="following-list-scroller">
                 <Feed>
-                {this.props.selectedUser.followed_by.map((followObj) => {
+                {this.props.followersList.map((person) => {
                     return(
                         <Feed.Event>
                         <Feed.Label>
-                            <img src={this.getPicture(followObj.follower_id)} />
+                            <img src={this.getPicture(person.id)} />
                         </Feed.Label>
                         <Feed.User>
-                        {this.getUsername(followObj.follower_id)}
+                        {person.username}
                         </Feed.User>
                         </Feed.Event>
                     )

@@ -15,24 +15,36 @@ class Profile extends Component{
         showFollowingList: false,
         showFollowersList: false,
         playing: false,
-        followedByLoggedInUser: false
+        followedByLoggedInUser: false,
+        selectedUserFollowers: [],
+        loggedInUserFollowObjs: []
     }
 
     componentDidMount(){
+         
         let loggedInUserFollowingList = this.props.loggedInUser.follows
         let selectedUser = this.props.selectedUser
+        let followersArray = []
+        selectedUser.followed_by.forEach(follow => {
+            let foundUser = this.props.users.find(user => user.id == follow.follower_id)
+            followersArray.push(foundUser)
+        })
+        this.setState({selectedUserFollowers: followersArray, loggedInUserFollowObjs: loggedInUserFollowingList}) 
         let found = loggedInUserFollowingList.find(follower => follower.followed_id == selectedUser.id)
         if (found){
             this.setState({followedByLoggedInUser: true})
         }
 
-        // loggedinuser needs to be fetched inorder to get the updated follows list
+        // loggedinuser needs to be fetched inorder to get the updated follows list(done)
+        // when a user gets followed or unfollowed, timeline gets updated(done)
+        // when user switches between loggedinuser profile and searched user, component do not mount.
+
         // following follows section on profile component needs to get updated as loggedinuser follows or unfollows the user.
         
     }
 
     componentWillUnmount(){
-
+        this.props.reFetchLoggedInUser(this.props.loggedInUser.id)
     }
 
  
@@ -57,18 +69,27 @@ class Profile extends Component{
       })
     })
     .then(resp => resp.json())
-    .then(console.log)
+    .then(resp => {
+         
+        this.setState({
+            loggedInUserFollowObjs: [...this.state.loggedInUserFollowObjs, resp.followObj]
+        })
+    })
     }
 
     unfollowUser = () =>{
-        let loggedInUser = this.props.loggedInUser
-        let followObj = loggedInUser.follows.find(obj => obj.followed_id == this.props.selectedUser.id)
+        let followObjects = this.state.loggedInUserFollowObjs
+         
+        let followObj = followObjects.find(obj => obj.followed_id == this.props.selectedUser.id && obj.follower_id == this.props.loggedInUser.id)
+        let filtered = followObjects.filter(obj => obj.followed_id !== this.props.selectedUser.id)
+         
 
         fetch(`http://localhost:3000/follows/${followObj.id}`, {
         method: "DELETE"
         })
         .then(resp => resp.json())
         .then(console.log)
+        this.setState({loggedInUserFollowObjs: filtered})
     }
 
 
@@ -93,18 +114,24 @@ class Profile extends Component{
     }
 
     followFunction = (user) =>{
-        let userInstance = user
+        let userInstance = {id: this.props.loggedInUser.id, username: this.props.loggedInUser.username}
+        let followersList = this.state.selectedUserFollowers
+
     
         if (this.state.followedByLoggedInUser){
+            let filtered = followersList.filter(person => person.id !== userInstance.id)
+             
             this.setState({
-                followedByLoggedInUser: false
+                followedByLoggedInUser: false,
+                selectedUserFollowers: filtered
             })
             console.log("user to be unfollowed")
             this.unfollowUser()
             // unfollow user 
         } else {
             this.setState({
-                followedByLoggedInUser: true
+                followedByLoggedInUser: true,
+                selectedUserFollowers: [...this.state.selectedUserFollowers, userInstance]
             })
             console.log("user to be followed")
             this.followUser()
@@ -210,10 +237,10 @@ class Profile extends Component{
                     </Card.Content>
                  </Card>
                  {loggedInUser == selectedUser ?
-                 <Followmenu selectedUser={this.props.selectedUser} followingList={this.props.followingList} followersList={this.props.followersList} users={this.props.users}/>
+                 <Followmenu followersList={this.state.selectedUserFollowers} selectedUser={this.props.selectedUser} users={this.props.users}/>
                  :
                 //  null
-                 <Followmenu selectedUser={this.props.selectedUser} followingList={this.props.searchedUserFollowingList} followersList={this.props.searchedUserFollowersList} users={this.props.users}/>
+                 <Followmenu followersList={this.state.selectedUserFollowers} selectedUser={this.props.selectedUser} users={this.props.users}/>
                  
                 }
                 </div>

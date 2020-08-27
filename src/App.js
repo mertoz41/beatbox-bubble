@@ -13,16 +13,9 @@ class App extends Component {
   
   this.state ={
     loggedInUser: null,
-    loggedInUserSongs: [],
     session: false,
     users: [],
     searchedUser: null,
-    loggedInUserSharedSongsList: [],
-    loggedInUserSharedSongsIds: [],
-    searchedUserFollowingList: [],
-    searchedUserFollowersList: [],
-    searchedUserSharedSongsIds: [],
-    searchedUserSharedSongsList: [],
     timeline: [],
     selectedSong: null
   }
@@ -78,7 +71,7 @@ class App extends Component {
 
 
   toLoggedInUserProfile = (user) =>{
-    this.setState({searchedUser: user})
+    this.setState({searchedUser: user, timeline: []})
   }
 
   fetchEachSong = (id) =>{
@@ -171,7 +164,7 @@ class App extends Component {
     // if (user === this.state.loggedInUser){
     //   this.reFetchLoggedInUser(user.id)
     // } else {
-
+    debugger 
     let id = user.id
     let userObj = {}
     fetch(`http://localhost:3000/users/${id}`)
@@ -182,6 +175,8 @@ class App extends Component {
         searchedUser: resp.user,
         timeline: []
       })
+
+
      
       // this.createSelectedUser(resp.user)
        
@@ -234,107 +229,108 @@ addNewSong = (song) =>{
 
 }
 
-  followUser = (user) =>{
-    let loggedInUserFollows = this.state.loggedInUser.follows
-    let foundFollowObj = loggedInUserFollows.find((followObj) => followObj.followed_id == user.id )
-    // followed_id is the action person
+  // followUser = (user) =>{
+  //   let loggedInUserFollows = this.state.loggedInUser.follows
+  //   let foundFollowObj = loggedInUserFollows.find((followObj) => followObj.followed_id == user.id )
+  //   // followed_id is the action person
  
-    if (foundFollowObj) {
-      this.unfollowUser(foundFollowObj)
-    } else {
+  //   if (foundFollowObj) {
+  //     this.unfollowUser(foundFollowObj)
+  //   } else {
 
     
 
      
-    // let searchedUser = {
-    //   id: user.id,
-    //   username: user.username
-    // }
+  //   // let searchedUser = {
+  //   //   id: user.id,
+  //   //   username: user.username
+  //   // }
 
     
 
-    // let followingUsers = this.state.followingList
-    // if (followingUsers.includes(user.id)){
-    //   this.unfollowUser(user)
-    // } else {
+  //   // let followingUsers = this.state.followingList
+  //   // if (followingUsers.includes(user.id)){
+  //   //   this.unfollowUser(user)
+  //   // } else {
      
-    let followed_id = user.id
-    let follower_id = this.state.loggedInUser.id
-    let followObj ={
-      followed: followed_id,
-      follower: follower_id
-    }
+  //   let followed_id = user.id
+  //   let follower_id = this.state.loggedInUser.id
+  //   let followObj ={
+  //     followed: followed_id,
+  //     follower: follower_id
+  //   }
 
-    fetch('http://localhost:3000/follows', {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify({
-        followObj
-      })
-    })
-    .then(resp => resp.json())
-    .then(console.log)
-    // this.setState({
-    //   followingList: [...this.state.followingList, followed_id]
-    // })
-    this.searchedUser(user)
-    this.reFetchLoggedInUser(this.state.loggedInUser.id)
-    // this.reFetchLoggedInUser(follower_id)
-  }
-  }
+  //   fetch('http://localhost:3000/follows', {
+  //     method: "POST",
+  //     headers: {
+  //       "Content-Type": "application/json"
+  //     },
+  //     body: JSON.stringify({
+  //       followObj
+  //     })
+  //   })
+  //   .then(resp => resp.json())
+  //   .then(console.log)
+  //   // this.setState({
+  //   //   followingList: [...this.state.followingList, followed_id]
+  //   // })
+  //   this.searchedUser(user)
+  //   this.reFetchLoggedInUser(this.state.loggedInUser.id)
+  //   // this.reFetchLoggedInUser(follower_id)
+  // }
+  // }
   closeComments = () =>{
     this.setState({selectedSong: null})
   }
 
-  unfollowUser = (obj) =>{
-    let unfollowedUser = this.state.users.find((user) => user.id == obj.followed_id)
+  // unfollowUser = (obj) =>{
+  //   let unfollowedUser = this.state.users.find((user) => user.id == obj.followed_id)
 
     
-    // let loggedInUser = this.state.loggedInUser
-    // debugger 
-    // let loggedInUserUsername = this.state.loggedInUser.username
-    // let searchedUser = {
-    //   id: user.id,
-    //   username: user.username
-    // }
+  //   // let loggedInUser = this.state.loggedInUser
+  //   // debugger 
+  //   // let loggedInUserUsername = this.state.loggedInUser.username
+  //   // let searchedUser = {
+  //   //   id: user.id,
+  //   //   username: user.username
+  //   // }
     
     
-    // let id = user.id 
-    // let list = this.state.followingList
-    // let updated = list.filter((id) => id !== id)
-    // let found = loggedInUser.follows.find((user) => user.followed_id == id)
+  //   // let id = user.id 
+  //   // let list = this.state.followingList
+  //   // let updated = list.filter((id) => id !== id)
+  //   // let found = loggedInUser.follows.find((user) => user.followed_id == id)
      
-    fetch(`http://localhost:3000/follows/${obj.id}`, {
-      method: "DELETE"
-    })
-    .then(resp => resp.json())
-    .then(console.log)
-    this.searchedUser(unfollowedUser)
-    this.reFetchLoggedInUser(this.state.loggedInUser.id)
-  }
-
-  // updateLoggedInUser = (id) =>{
-  //   fetch(`http://localhost:3000/users/${id}`)
-  //   .then(resp => resp.json())
-  //   .then(resp => { 
-  //     let followList = []
-  //     let followedList = []
-  //         resp.user.follows.forEach((user) => followList.push(user.followed_id))
-  //         resp.user.followed_by.forEach((user) => followedList.push(user.follower_id))
-  //         this.setState({
-  //           loggedInUser: resp.user,
-  //           followingList: followList,
-  //           followersList: followedList
-  //         })
+  //   fetch(`http://localhost:3000/follows/${obj.id}`, {
+  //     method: "DELETE"
   //   })
-    
+  //   .then(resp => resp.json())
+  //   .then(console.log)
+  //   this.searchedUser(unfollowedUser)
+  //   this.reFetchLoggedInUser(this.state.loggedInUser.id)
   // }
+
+  // // updateLoggedInUser = (id) =>{
+  // //   fetch(`http://localhost:3000/users/${id}`)
+  // //   .then(resp => resp.json())
+  // //   .then(resp => { 
+  // //     let followList = []
+  // //     let followedList = []
+  // //         resp.user.follows.forEach((user) => followList.push(user.followed_id))
+  // //         resp.user.followed_by.forEach((user) => followedList.push(user.follower_id))
+  // //         this.setState({
+  // //           loggedInUser: resp.user,
+  // //           followingList: followList,
+  // //           followersList: followedList
+  // //         })
+  // //   })
+    
+  // // }
 
   
 
   logUser =(user)=>{
+     
     this.setState({ loggedInUser: user })
     this.getTimeline(user.id)
   }
@@ -372,18 +368,9 @@ addNewSong = (song) =>{
   logUserOut = () => {
     
     this.setState({
-      followersList: [],
-      followingList: [],
+    
       loggedInUser: null,
       loggedInUserSongs: [],
-      userSharedSongsList: [],
-      userSharedSongsIds: [],
-      loggedInUserSharedSongsList: [],
-      loggedInUserSharedSongsIds: [],
-      searchedUserFollowingList: [],
-      searchedUserFollowersList: [],
-      searchedUserSharedSongsList: [],
-      searchedUserSharedSongsIds: [],
       searchedUser: null,
       session: false,
       timeline: [],
@@ -426,8 +413,15 @@ addNewSong = (song) =>{
               <Redirect to="/login" />
               }
           />
+          <Route exact path="/profile" render={() =>
+            this.state.searchedUser ?
+            <Profile toLoggedInUserProfile={this.toLoggedInUserProfile} searchedUserSharedSongsList={this.state.searchedUserSharedSongsList} logUserOut={this.logUserOut} backToTimeline={this.backToTimeline} userSharedSongsList={this.state.userSharedSongsList} searchedUserFollowersList={this.state.searchedUserFollowersList} searchedUserFollowingList={this.state.searchedUserFollowingList} followersList={this.state.followersList} followingList={this.state.followingList} followUser={this.followUser} selectedUser={this.state.searchedUser} searchedUser={this.searchedUser} users={this.state.users} startMachine={this.startMachine} loggedInUser={this.state.loggedInUser} reFetchLoggedInUser={this.reFetchLoggedInUser} />
+            :
+            <Redirect to="/login" />
+          }
+          />
+        
           
-            <Profile toLoggedInUserProfile={this.toLoggedInUserProfile} searchedUserSharedSongsList={this.state.searchedUserSharedSongsList} logUserOut={this.logUserOut} backToTimeline={this.backToTimeline} userSharedSongsList={this.state.userSharedSongsList} searchedUserFollowersList={this.state.searchedUserFollowersList} searchedUserFollowingList={this.state.searchedUserFollowingList} followersList={this.state.followersList} followingList={this.state.followingList} followUser={this.followUser} selectedUser={this.state.searchedUser} searchedUser={this.searchedUser} users={this.state.users} startMachine={this.startMachine} loggedInUser={this.state.loggedInUser}/>
 
 
 

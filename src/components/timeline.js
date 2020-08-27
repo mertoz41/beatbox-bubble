@@ -4,31 +4,71 @@ import { Redirect } from 'react-router-dom';
 import { Button, Feed, Icon, Label } from 'semantic-ui-react'
 import Comments from './comments'
 import Waveform from './waveform'
+import Explore from './explore'
 
 
 
 class Timeline extends Component {
     state = {
         timeline: [],
-        selectedSong: null
+        selectedSong: null,
+        loggedInUserShares: [],
+        loggedInUserSharedSongs: [],
+        songNames: [],
+        exploreSongs: []
     }
 
 
 
-    // componentDidMount(){
-    //     let loggedInUser = this.props.loggedInUser
+    componentDidMount(){
+        let loggedInUser = this.props.loggedInUser
+        this.getTimeline(loggedInUser.id)
+        this.getExplore()
+        let namesList = loggedInUser.sharedsongs.map(song => song.name)
+         
+         
+        this.setState({loggedInUserShares: loggedInUser.shares, loggedInUserSharedSongs: loggedInUser.sharedsongs, songNames: namesList})
+
+        // timeline needs to be sorted from recent to oldest. 
+
         
-    //     fetch(`http://localhost:3000/timeline/${loggedInUser.id}`)
-    //     .then(resp => resp.json())
-    //     .then(resp => {
+
+        // fetch(`http://localhost:3000/timeline/${loggedInUser.id}`)
+        // .then(resp => resp.json())
+        // .then(resp => {
              
-    //         resp.tl_tracks.forEach((song) => {
-    //             this.fetchEachSong(song.id)
-    //         })
+        //     resp.tl_tracks.forEach((song) => {
+        //         this.fetchEachSong(song.id)
+        //     })
             
-    //     })
-    //     // this.state.timeline.forEach((song) => this.trackComments(song))
-    // }
+        // })
+        // // this.state.timeline.forEach((song) => this.trackComments(song))
+    }
+    getExplore = () =>{
+        fetch('http://localhost:3000/explore')
+        .then(resp => resp.json())
+        .then(resp => {
+            this.setState({exploreSongs: resp.explore_songs})
+        })
+    }
+    getTimeline = (id) =>{
+        fetch(`http://localhost:3000/timeline/${id}`)
+            .then(resp => resp.json())
+            .then(resp => {
+            //   resp.tl_tracks.forEach((track) => {
+            //     if (!track.shared){
+            //       track.shared = []
+            //     }
+            //   }) 
+     
+              this.setState({timeline: resp.tl_tracks})
+                // resp.tl_tracks.forEach((song) => {
+                //     this.fetchEachSong(song.id)
+                // })
+                
+            })
+      }
+    
 
     // fetchEachSong = (id) => {
     //     // let timeline = this.state.timeline
@@ -99,9 +139,10 @@ class Timeline extends Component {
     }
 
     postComment = (commnt) =>{
+         
         let comment = commnt 
         let song = this.state.selectedSong
-        let selectedSongId = this.props.selectedSong.id
+        let selectedSongId = this.state.selectedSong.id
         let loggedInUserId = this.props.loggedInUser.id
         let commentObj = {
             user_id: loggedInUserId,
@@ -120,12 +161,12 @@ class Timeline extends Component {
         .then(resp => resp.json())
         .then(resp => {
              
-            this.props.getTimeline(this.props.loggedInUser.id)
-            let selectedSong = this.props.selectedSong
+            // this.props.getTimeline(this.props.loggedInUser.id)
+            let selectedSong = this.state.selectedSong
             selectedSong.comments.push(resp.nu_comment)
             
              
-            this.props.showTrackComments(selectedSong)
+            this.showTrackComments(selectedSong)
             // this.props.fetchEachSong(resp.nu_comment.song_id) 
 
             // this.setState({
@@ -147,14 +188,18 @@ class Timeline extends Component {
         return num
     }
 
-    shareSong = (track) =>{
+    shareSongFunc = (track) =>{
         let loggedInUser = this.props.loggedInUser
+        let loggedInUserSharedSongs = this.state.loggedInUserSharedSongs
 
-        let sharedVersion = loggedInUser.sharedsongs.find((song) => song.name === track.name)
-         
+        let sharedVersion = loggedInUserSharedSongs.find((song) => song.name === track.name)
+
 
         
-        debugger 
+         
+        
+        
+         
         if (sharedVersion){
             this.unshareSong(sharedVersion, track)
         } else {
@@ -163,7 +208,7 @@ class Timeline extends Component {
             song_id: track.id,
             user_id: loggedInUser.id
         }
-        debugger
+        
         fetch('http://localhost:3000/shares', {
             method: "POST",
             headers: {
@@ -173,26 +218,61 @@ class Timeline extends Component {
         })
         .then(resp => resp.json())
         .then(resp => {
-            // this.props.fetchEachSong(track.id)
-            // this.props.reFetchLoggedInUser(loggedInUser.id)
-            this.props.getTimeline(this.props.loggedInUser.id)
+            let timeline = this.state.timeline
+            let found = timeline.find(song => song == track)
+            found.shared.push(resp.shared_obj)
+            timeline.splice(timeline.indexOf(track), 1, found) 
+            let songsList = this.state.songNames
+            songsList.push(track.name)
+            this.setState({
+                loggedInUserShares: [...this.state.loggedInUserShares, resp.shared_obj],
+                loggedInUserSharedSongs: [...this.state.loggedInUserSharedSongs, resp.shared_song],
+                timeline: timeline,
+                songNames: songsList
+            })
+            // need to update the shared songs shared prop in timeline as well
+            // resp.shared_obj to be added on found.shared
+            // this.props.getTimeline(this.props.loggedInUser.id)
         })
     }
+    this.getExplore()
     }
 
     unshareSong = (sharedV, track) =>{
         // let shares = this.props.loggedInUser.shares
         // let found = shares.find((share) => share.sharedsong_id == track.id)
+        let loggedInUserShares = this.state.loggedInUserShares
+        let loggedInUserSharedSongs = this.state.loggedInUserSharedSongs
+
+        let filteredShares = loggedInUserShares.filter(share => share.sharedsong_id !== sharedV.id)
+        let filteredSharedSongs = loggedInUserSharedSongs.filter(song => song.id !== sharedV.id)
+        let filteredSongShares = track.shared.filter(song => song.sharedsong_id !== sharedV.id)
+        track.shared = filteredSongShares
+        let updatedTrack = track
+        let timeline = this.state.timeline
+        timeline.splice(timeline.indexOf(track), 1, updatedTrack)
+        let filteredSongNames = this.state.songNames.filter(song => song !== track.name)
+        this.setState({timeline: timeline, songNames: filteredSongNames})
+         
 
          
-   
+
         fetch(`http://localhost:3000/sharedsongs/${sharedV.id}`, {
             method: "DELETE"
         })
         .then(resp => resp.json())
-        this.props.fetchEachSong(track.id)
-        this.props.reFetchLoggedInUser(this.props.loggedInUser.id)
-        this.props.getTimeline(this.props.loggedInUser.id)
+        this.setState({
+            loggedInUserShares: filteredShares,
+            loggedInUserSharedSongs: filteredSharedSongs
+        })
+        // this.props.fetchEachSong(track.id)
+        // this.props.reFetchLoggedInUser(this.props.loggedInUser.id)
+        // this.props.getTimeline(this.props.loggedInUser.id)
+    }
+
+    showTrackComments = (track) =>{
+         
+        this.setState({selectedSong: track})
     }
 
     closeComments = () =>{
@@ -212,12 +292,14 @@ class Timeline extends Component {
         if (this.props.selectedUser){
             return <Redirect to="/profile" />
         }
+     
         return(
             <div>
                 <Navbar toLoggedInUserProfile={this.props.toLoggedInUserProfile} logUserOut={this.props.logUserOut} backToTimeline={this.props.backToTimeline} searchedUser={this.props.searchedUser} users={this.props.users} loggedInUser={this.props.loggedInUser} startMachine={this.props.startMachine}/>
+                <Explore users={this.props.users} exploreSongs={this.state.exploreSongs}/>
                 <div className="timeline">
                     <Feed>
-                    {this.props.timeline.map((track) =>{
+                    {this.state.timeline.map((track) =>{
                         return(
                             <Feed.Event>
                             <Feed.Label>
@@ -240,20 +322,28 @@ class Timeline extends Component {
                             <Waveform track={track} />
                             </div>
                             <div className="timeline-buttons">
-                            <Button onClick={() => this.props.showTrackComments(track)} as='div' labelPosition='left'>
+                            <Button onClick={() => this.showTrackComments(track)} as='div' labelPosition='left'>
                             <Label as='a' basic>
                                 {track.comments.length}
                             </Label>
                             <Button icon>
-                            <Icon name='comment' />
+                                {track.comments.length > 0 ?
+                                <Icon name='comment' />
+                                :
+                                <Icon name='comment outline' />
+                            }
                             </Button>
                             </Button>
-                            <Button as="div" labelPosition='left' onClick={() => this.shareSong(track)}>
+                            <Button as="div" labelPosition='left' onClick={() => this.shareSongFunc(track)}>
                                 <Label as='a' basic>
                                     {track.shared.length}
                                 </Label>
                                 <Button icon>
-                                    <Icon name='share' />
+                                    {this.state.songNames.includes(track.name) ?
+                                    <Icon name='bookmark' />
+                                    :
+                                    <Icon name="bookmark outline" />
+                                }
                                 </Button>
                             </Button>
                             </div>
@@ -270,8 +360,8 @@ class Timeline extends Component {
                     })}
                     </Feed>
                 </div>
-                {this.props.selectedSong ?
-                <Comments closeComments={this.props.closeComments} postComment={this.postComment} allUsers={this.props.users} loggedInUser={this.props.loggedInUser} selectedSong={this.props.selectedSong}/>
+                {this.state.selectedSong ?
+                <Comments closeComments={this.closeComments} postComment={this.postComment} allUsers={this.props.users} loggedInUser={this.props.loggedInUser} selectedSong={this.state.selectedSong}/>
             :
             null
             }

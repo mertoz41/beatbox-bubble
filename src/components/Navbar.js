@@ -29,6 +29,8 @@ class Navbar extends Component{
     selectedUser =(event) =>{
         let foundUser = this.props.users.find((user) => user.username == event.target.innerText)
         this.props.searchedUser(foundUser)
+        this.props.history.push('/machine')
+
 
 
 
@@ -47,7 +49,7 @@ class Navbar extends Component{
 
     userRedirect = () =>{
          
-        // this.props.searchedUser(this.props.loggedInUser)
+        this.props.searchedUser(this.props.loggedInUser)
         this.props.history.push('/profile')
     }
 
