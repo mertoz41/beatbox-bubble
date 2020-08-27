@@ -15,7 +15,8 @@ class Timeline extends Component {
         loggedInUserShares: [],
         loggedInUserSharedSongs: [],
         sharedSongNames: [],
-        exploreSongs: []
+        exploreSongs: [],
+        showExplore: false
     }
 
 
@@ -196,11 +197,19 @@ class Timeline extends Component {
         return num
     }
 
+    exploreFunc =(track, shareObj) =>{
+        let exploreSect = this.state.exploreSongs
+         
+
+    }
+
     shareSongFunc = (track) =>{
         let loggedInUser = this.props.loggedInUser
         let loggedInUserSharedSongs = this.state.loggedInUserSharedSongs
 
         let sharedVersion = loggedInUserSharedSongs.find((song) => song.name === track.name)
+
+        
 
 
         
@@ -227,6 +236,16 @@ class Timeline extends Component {
         .then(resp => resp.json())
         .then(resp => {
             let timeline = this.state.timeline
+            let exploreSongs = this.state.exploreSongs
+            let exploredVersion = exploreSongs.find((song) => song.name == track.name)
+
+            if (exploredVersion){
+                exploredVersion.shares.push(resp.shared_obj)
+                exploreSongs.splice(exploreSongs.indexOf(track), 1, exploredVersion)
+                this.setState({exploreSongs: exploreSongs})
+            }
+
+
             let found = timeline.find(song => song == track)
             found.shared.push(resp.shared_obj)
             timeline.splice(timeline.indexOf(track), 1, found) 
@@ -243,7 +262,6 @@ class Timeline extends Component {
             // this.props.getTimeline(this.props.loggedInUser.id)
         })
     }
-    this.getExplore()
     }
 
     unshareSong = (sharedV, track) =>{
@@ -262,12 +280,27 @@ class Timeline extends Component {
         let timeline = this.state.timeline
         timeline.splice(timeline.indexOf(track), 1, updatedTrack)
         let filteredSongNames = this.state.sharedSongNames.filter(song => song !== track.name)
+
+        let exploreSongs = this.state.exploreSongs
+        let exploredVersion = exploreSongs.find((song) => song.name == track.name)
+        debugger 
+        if (exploredVersion){
+        let filteredShares = exploredVersion.shares.filter(share => share.user_id !== this.props.loggedInUser.id)
+        exploredVersion.shares = filteredShares
+        
+        exploreSongs.splice(exploreSongs.indexOf(exploredVersion), 1, exploredVersion)
+        this.setState({exploreSongs: exploreSongs})
+        }
+
+
         this.setState({timeline: timeline, sharedSongNames: filteredSongNames})
-         
+
 
          
 
-        fetch(`http://localhost:3000/sharedsongs/${sharedV.id}`, {
+         
+
+        fetch(`http://localhost:3000/shares/${this.props.loggedInUser.id}`, {
             method: "DELETE"
         })
         .then(resp => resp.json())
@@ -297,6 +330,12 @@ class Timeline extends Component {
          
     }
 
+    showExploreSect = () =>{
+        this.setState({
+            showExplore: !this.state.showExplore
+        })
+    }
+
     
     render(){
         if (this.props.selectedUser){
@@ -306,7 +345,14 @@ class Timeline extends Component {
         return(
             <div>
                 <Navbar toLoggedInUserProfile={this.props.toLoggedInUserProfile} logUserOut={this.props.logUserOut} backToTimeline={this.props.backToTimeline} searchedUser={this.props.searchedUser} users={this.props.users} loggedInUser={this.props.loggedInUser} startMachine={this.props.startMachine}/>
+                <div onClick={() => this.showExploreSect()} className="explore-writing">
+                <h3>Explore</h3>
+                </div>
+                {this.state.showExplore ?
                 <Explore users={this.props.users} exploreSongs={this.state.exploreSongs}/>
+                : 
+                null   
+                }
                 <div className="timeline">
                 <div className="timeline-writing">
                 <h3>Timeline</h3>

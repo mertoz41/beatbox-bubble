@@ -111,6 +111,13 @@
 
 
 }
+.singlewaveformpro{
+  position: absolute;
+  text-align: center;
+  top: 100px;
+  left: 230px;
+
+}
 
 .timeline-writing{
   position: relative;
@@ -165,9 +172,9 @@
 }
 .user-shared-tracks {
   position: absolute;
-  text-align: center;
   top: 140px;
-  right: 30px;
+  right: 20px;
+  text-align: center;
 
 
 }
@@ -175,7 +182,7 @@
   position: relative;
   top: 20px;
   width: 520px;
-  height: 550px;
+  height: 540px;
   overflow-y: scroll;
   scrollbar-color: rebeccapurple green;
   scrollbar-width: thin;
@@ -185,7 +192,7 @@
   position: relative;
   top: 20px;
   overflow-y: scroll;
-  height: 500px;
+  height: 540px;
   width: 530px;
   scrollbar-color: rebeccapurple green;
   scrollbar-width: thin;
@@ -203,6 +210,12 @@
 .track-name{
   position: relative;
   text-align: center;
+  top: 15px;
+}
+.user-shared-song-name{
+  position: relative;
+  text-align: center;
+  top: 15px;
 }
 
 .timer {

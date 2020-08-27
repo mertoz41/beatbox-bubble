@@ -60,7 +60,7 @@ class App extends Component {
             }
           }) 
 
-          debugger 
+           
 
            
           this.setState({timeline: resp.tl_tracks})

@@ -2,6 +2,7 @@ import React,{Component} from 'react'
 import Navbar from './Navbar'
 import Followmenu from './followmenu'
 import Waveform from './waveform'
+import Waveformpro from './waveformpro'
 import WaveSurfer from 'wavesurfer.js';
 import { Button, Feed, Icon, Label, Card, Image} from 'semantic-ui-react'
 
@@ -261,9 +262,8 @@ class Profile extends Component{
                             <h4>{track.name}</h4>
                             </div>
                             <Feed.Summary>
-                            <Feed.Date>{this.getTrackDate(track)}</Feed.Date>
                             </Feed.Summary>
-                            <Waveform track={track} />
+                            <Waveformpro track={track} />
                             {/* <div id={"wave-" + this.toString(track.id)}/> */}  
                         </div>
                         </Feed.Content>
@@ -284,8 +284,10 @@ class Profile extends Component{
                         {this.props.selectedUser.sharedsongs.map((song) => {
                             return(
                                 <div className="user-shared-song">
+                                    <div className="user-shared-song-name">
                                     <h4>{song.name} by {this.findUsername(song)}</h4>
-                                    <Waveform track={song} />
+                                    </div>
+                                    <Waveformpro track={song} />
                                 </div>
                             )
                         })}

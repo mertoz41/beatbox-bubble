@@ -37,9 +37,7 @@ class Explore extends Component{
         return(
             <div>
                 <div className="explore">
-                <div className="explore-writing">
-                <h3>Explore</h3>
-                </div>
+                
                 <div className="timeline-scroller">
                     <Feed>
                     {this.props.exploreSongs.map((track) =>{

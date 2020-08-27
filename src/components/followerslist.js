@@ -24,7 +24,7 @@ class Followerslist extends Component{
                             <img src={this.getPicture(person.id)} />
                         </Feed.Label>
                         <Feed.User>
-                        {person.username}
+                        <h4>{person.username}</h4>
                         </Feed.User>
                         </Feed.Event>
                     )
