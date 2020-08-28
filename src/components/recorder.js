@@ -10,16 +10,18 @@ class Recorder extends Component{
         records: [],
         recordName: "",
         recordNames: [],
-        recordwBlobs: []
+        recordwBlobs: [],
+        question: []
         }
 
     resetState = () =>{
-        this.setState({recordName: ""})
+        this.setState({recordName: "", question: [] })
     }
 
     recordIncome = (record) =>{
         debugger 
-        this.setState({records: [...this.state.records, record]})
+        
+        this.setState({records: [...this.state.records, record], question: [...this.state.question, record]})
 
     }
 
@@ -37,9 +39,8 @@ class Recorder extends Component{
         let record = {}
         let name = this.state.recordName
         record[name] = pattern.blobURL
-        this.setState({recordwBlobs: [...this.state.recordwBlobs, record], recordName:""})
+        this.setState({recordwBlobs: [...this.state.recordwBlobs, record], recordName:"", question: []})
         this.props.addPattern(record) 
-        this.resetState()
     
     }
 
@@ -81,7 +82,7 @@ class Recorder extends Component{
                 <Mic recordIncome={this.recordIncome}/>
                 
 
-                {this.state.records.map((instance) =>{
+                {this.state.question.map((instance) =>{
                     return(
                         <div className="records-edit">
                             <h4>Add Pattern</h4>
