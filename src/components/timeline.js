@@ -251,6 +251,7 @@ class Timeline extends Component {
             timeline.splice(timeline.indexOf(track), 1, found) 
             let songsList = this.state.sharedSongNames
             songsList.push(track.name)
+            this.props.addLoggedInUserShares(resp.shared_obj, resp.shared_song)
             this.setState({
                 loggedInUserShares: [...this.state.loggedInUserShares, resp.shared_obj],
                 loggedInUserSharedSongs: [...this.state.loggedInUserSharedSongs, resp.shared_song],
@@ -284,6 +285,7 @@ class Timeline extends Component {
         let exploreSongs = this.state.exploreSongs
         let exploredVersion = exploreSongs.find((song) => song.name == track.name)
         debugger 
+        this.props.addLoggedInUserShares(sharedV, track)
         if (exploredVersion){
         let filteredShares = exploredVersion.shares.filter(share => share.user_id !== this.props.loggedInUser.id)
         exploredVersion.shares = filteredShares

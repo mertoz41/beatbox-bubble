@@ -50,6 +50,25 @@ class App extends Component {
       })
   }
 
+  addLoggedInUserShares = (obj, song) => {
+    let loggedInUser = this.state.loggedInUser
+    
+    let found = loggedInUser.shares.find(share => share.sharedsong_id == obj.id)
+    if (found){
+      let filteredShares = loggedInUser.shares.filter(share => share.sharedsong_id !== obj.id)
+      loggedInUser.shares = filteredShares
+      let filteredSharedSongs = loggedInUser.sharedsongs.filter(song => song.id !== obj.id)
+      loggedInUser.sharedsongs = filteredSharedSongs
+      this.setState({loggedInUser: loggedInUser})
+      // take out the sharedsong and share obj
+    } else {
+      loggedInUser.shares.push(obj)
+      loggedInUser.sharedsongs.push(song)
+      this.setState({loggedInUser: loggedInUser})
+    }
+
+  }
+
   getTimeline = (id) =>{
     fetch(`http://localhost:3000/timeline/${id}`)
         .then(resp => resp.json())
@@ -395,7 +414,7 @@ addNewSong = (song) =>{
             />
           <Route exact path="/timeline" render={() =>
               this.state.loggedInUser ? 
-              <Timeline getTimeline={this.getTimeline} toLoggedInUserProfile={this.toLoggedInUserProfile}closeComments={this.closeComments} selectedSong={this.state.selectedSong} showTrackComments={this.showTrackComments} timeline={this.state.timeline} fetchEachSong={this.fetchEachSong} logUserOut={this.logUserOut} backToTimeline={this.backToTimeline} reFetchLoggedInUser={this.reFetchLoggedInUser} loggedInUserSharedSongsIds={this.state.loggedInUserSharedSongsIds} loggedInUserSharedSongsList={this.state.loggedInUserSharedSongsList} selectedUser={this.state.searchedUser} searchedUser={this.searchedUser} users={this.state.users} startMachine={this.startMachine} loggedInUser={this.state.loggedInUser} />
+              <Timeline addLoggedInUserShares={this.addLoggedInUserShares} getTimeline={this.getTimeline} toLoggedInUserProfile={this.toLoggedInUserProfile}closeComments={this.closeComments} selectedSong={this.state.selectedSong} showTrackComments={this.showTrackComments} timeline={this.state.timeline} fetchEachSong={this.fetchEachSong} logUserOut={this.logUserOut} backToTimeline={this.backToTimeline} reFetchLoggedInUser={this.reFetchLoggedInUser} loggedInUserSharedSongsIds={this.state.loggedInUserSharedSongsIds} loggedInUserSharedSongsList={this.state.loggedInUserSharedSongsList} selectedUser={this.state.searchedUser} searchedUser={this.searchedUser} users={this.state.users} startMachine={this.startMachine} loggedInUser={this.state.loggedInUser} />
               :
               <Redirect to="/login" />
               }
