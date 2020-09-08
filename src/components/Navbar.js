@@ -10,40 +10,43 @@ import mics from '../pictures/mics.png'
 class Navbar extends Component{
 
     state = {
+
         searching: "",
         boxers: []
+
     }
 
     fixState = (event) =>{
+
         let searched = event.target.value
         let excludedLoggedInUser = this.props.users.filter((user) => user.username !== this.props.loggedInUser.username) 
         let found = excludedLoggedInUser.filter((user) => user.username.includes(searched))
-         
         found = found.map(boxer => ({title: boxer.username}))
         this.setState({
             searching: searched,
             boxers: found
         })
+
     }
 
     selectedUser =(event) =>{
+
         let foundUser = this.props.users.find((user) => user.username == event.target.innerText)
         this.props.searchedUser(foundUser)
         this.props.history.push('/machine')
 
-
-
-
     }
 
     machineRedirect = () =>{
+
         this.props.history.push('/machine')
         this.props.startMachine()
+
     }
     timelineRedirect = () =>{
+
         this.props.history.push('/timeline')
         this.props.backToTimeline()
-        // return <Redirect to="/timeline"/>
 
     }
 
@@ -51,9 +54,11 @@ class Navbar extends Component{
          
         this.props.searchedUser(this.props.loggedInUser)
         this.props.history.push('/profile')
+
     }
 
     logOut = () =>{
+        
         localStorage.clear()
         this.props.history.push('/login')
         this.props.logUserOut()

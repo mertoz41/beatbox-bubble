@@ -36,11 +36,6 @@ class Profile extends Component{
             this.setState({followedByLoggedInUser: true})
         }
 
-        // loggedinuser needs to be fetched inorder to get the updated follows list(done)
-        // when a user gets followed or unfollowed, timeline gets updated(done)
-        // when user switches between loggedinuser profile and searched user, component do not mount.
-
-        // following follows section on profile component needs to get updated as loggedinuser follows or unfollows the user.
         
     }
 
@@ -264,7 +259,6 @@ class Profile extends Component{
                             <Feed.Summary>
                             </Feed.Summary>
                             <Waveformpro track={track} />
-                            {/* <div id={"wave-" + this.toString(track.id)}/> */}  
                         </div>
                         </Feed.Content>
                         </Feed.Event>

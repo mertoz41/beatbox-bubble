@@ -125,27 +125,16 @@ class Machine extends Component {
 
       addPattern = (record) =>{ 
 
-         
-
-
         let channelPadsArray = []
-
         for (let i = 0; i < this.state.channelLength; i++){
           channelPadsArray.push(0)
         }
 
-
-         
-        
         let name = Object.keys(record)[0]
         let blob = Object.values(record)[0]
-
         let patternObj = {
           [name]: channelPadsArray
         }
-
-         
-         
         let updatedPads = []
         if (this.state.pads[0]){
           this.state.pads[0].forEach(pad =>{
@@ -161,20 +150,21 @@ class Machine extends Component {
             namedChannels: [...this.state.namedChannels, patternObj]
           })
           
-          
       }
 
       handleBpmChange = (bpm) =>{
+
         this.setState({ bpm: bpm.target.value})
         if (this.state.playing) {
           clearInterval(this.timerId)
           this.setTimer()
         }
+
       }
 
       addPad = () =>{
+
         let namedChannels = this.state.namedChannels
-        
         namedChannels.map(pad => {
           pad[Object.keys(pad)[0]].push(0)
         })
@@ -187,6 +177,7 @@ class Machine extends Component {
       }
 
       removePad = () =>{
+
         this.setState({
           channelLength: this.state.channelLength - 1
         })
@@ -194,6 +185,7 @@ class Machine extends Component {
         namedChannels.forEach(pad => {
           pad[Object.keys(pad)[0]].pop()
         })
+
       }
 
       deleteSample = (sample) =>{
@@ -203,10 +195,6 @@ class Machine extends Component {
         let filteredBlobChannels = this.state.blobChannels.filter((piece) => piece !== sampleBlob)
         let filteredNamedChannels = this.state.namedChannels.filter((channel) => Object.keys(channel)[0] !== sampleName)
         let filteredRecordedPatterns = this.state.recordedPatterns.filter((pattern) => pattern !== sample)
-
-         
-
-
         let updatedSampleLetters = this.state.sampleLetters.filter((letter) => letter !== Object.keys(sample)[0]) 
         let samples = this.state.recordedSamples
         let updatedSamples = samples.filter(smp => smp !== sample)
@@ -218,9 +206,9 @@ class Machine extends Component {
           recordedPatterns: filteredRecordedPatterns
           })
         
-         
       }
       deletePattern =(pattern)=>{
+
         let namedChannels = this.state.namedChannels
         let patterns = this.state.recordedPatterns
         let key = Object.keys(pattern)[0]
@@ -232,9 +220,11 @@ class Machine extends Component {
          
         this.setState({recordedPatterns: updatedPatterns, blobChannels: updatedBlobChannels, namedChannels: updatedNamedChannels})
         this.resetSequencer()
+
       }
 
       mute = (index) =>{
+
         let mutedRows = this.state.muted
         if (mutedRows.includes(index)){
           let found = mutedRows.find(num => num == index)
@@ -253,17 +243,10 @@ class Machine extends Component {
 
       postTrack = (track) =>{
 
-        // let reader = new FileReader()
-        // reader.readAsDataURL(this.state.recordedTrack)
-        // let blober = new Blob(chunks, {type: 'audio/mpeg-3'})
-
-        // let url = Object.values(track)[0]
         let id = this.props.loggedInUser.id
-        // let trac = this.state.recordedTrack
         let trackName = track.name
         let trackBlob = track.blob
       
-        debugger 
         
         let formData = new FormData()
         formData.append("id", id)
@@ -275,7 +258,6 @@ class Machine extends Component {
           method: "POST",
           headers: {
                    "Accept" : "application/json"
-                  //  "Content-Type": "multipart/form-data"
           },
           body: formData
 
@@ -284,45 +266,13 @@ class Machine extends Component {
         .then(resp => {
           this.props.addNewSong(resp)
         }) 
-           
-        
-          
-         
-
-
-       
-
-    //     var fd = new FormData();
-    //   fd.append('fname', 'test.wav');
-    //   fd.append('data', soundBlob);
-    //   $.ajax({
-    // type: 'POST',
-    // url: '/upload.php',
-    // data: fd,
-    // processData: false,
-    // contentType: false
-    //   }).done(function(data) {
-    //    console.log(data);
-    //   });
-         
-        // fetch('http://localhost:3000/add', {
-        //   method: 'PATCH',
-        //   headers: {
-        //     "Content-Type": "application/json",
-        //     "Accept" : "application/json"
-
-        //   },
-        //   body: JSON.stringify({formData})
-        // })
-        // .then(resp => resp.json())
-        // .then(resp => {
-           
-        // })
-        
+      
       }
 
       removeTrack = () =>{
+
         this.setState({recordedTrack: null})
+        
       }
     
     render(){

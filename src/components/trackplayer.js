@@ -34,18 +34,7 @@ class TrackPlayer extends Component{
          
         this.props.postTrack(track)
     }
-    // render(){
-    //     return(
-    //         <div className="trackPlayer">
-    //             <Button icon onClick={this.playTrack}><Icon name="play"/></Button>
-    //             <form>
-    //                 <input onChange={event=> this.fixState(event)} value={this.state.trackName} placeholder="track name goes here..."/>
-    //                 <button type="submit" onClick={event => this.exportTrack(event)}>Share track</button>
-    //             </form>
-    //             trackplayer experimenting
-    //         </div>
-    //     )
-    // }
+
     render(){
             return(
                 <div className="trackPlayer">

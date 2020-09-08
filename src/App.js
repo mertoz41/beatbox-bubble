@@ -60,7 +60,6 @@ class App extends Component {
       let filteredSharedSongs = loggedInUser.sharedsongs.filter(song => song.id !== obj.id)
       loggedInUser.sharedsongs = filteredSharedSongs
       this.setState({loggedInUser: loggedInUser})
-      // take out the sharedsong and share obj
     } else {
       loggedInUser.shares.push(obj)
       loggedInUser.sharedsongs.push(song)
@@ -77,24 +76,16 @@ class App extends Component {
             if (!track.shared){
               track.shared = []
             }
-          }) 
-
-           
-
-           
+          })
           this.setState({timeline: resp.tl_tracks})
-            // resp.tl_tracks.forEach((song) => {
-            //     this.fetchEachSong(song.id)
-            // })
-            
         })
   }
 
 
   toLoggedInUserProfile = (user) =>{
+
     this.setState({searchedUser: user, timeline: []})
   }
-
   fetchEachSong = (id) =>{
 
     fetch(`http://localhost:3000/songs/${id}`)
@@ -108,10 +99,7 @@ class App extends Component {
             let filtered = this.state.timeline.filter((song) => song.id !== resp.song.id)
             filtered.push(resp.song)
             let sortedFiltered = filtered.sort((a,b) => b.created_at - a.created_at)
-            debugger 
-             
-
-             
+            
             this.setState({
                 timeline: filtered
             })
@@ -119,56 +107,6 @@ class App extends Component {
         })
 
   }
-
-  createSelectedUser = (user) =>{
-    let preLoggedInUser = this.state.loggedInUser
-     
-
-    // if (user.id === preLoggedInUser.id) {
-    //   this.setState({
-    //     loggedInUser: user,
-    //     searchedUser: user
-    //   })
-    // } else {
-    //   let userObj = {}
-    //   userObj["id"] = user.id
-    //   userObj["username"] = user.username
-    //   userObj["songs"] = user.songs
-    //   userObj["followers"] = user.followed_by
-    //   userObj["following"] = user.follows
-
-    //   this.setState({
-    //     loggedInUser: user,
-    //     searchedUser: userObj
-    //   })
-    // }
-
-     
-    let userObj = {}
-      userObj["id"] = user.id
-      userObj["username"] = user.username
-      userObj["songs"] = user.songs
-      userObj["sharedsongs"] = user.sharedsongs
-      userObj["followers"] = user.followed_by
-      userObj["following"] = user.follows
-
-      let followList = []
-      let followedList = []
-      let searchedUserSharedSongsIds = []
-      let searchedUserSharedSongsList = []
-      user.follows.forEach((user) => followList.push(user.followed_id))
-      user.followed_by.forEach((user) => followedList.push(user.follower_id))
-      user.sharedsongs.forEach((song) => searchedUserSharedSongsIds.push(song.id))
-      user.sharedsongs.forEach((song) => searchedUserSharedSongsList.push(song))
-
-      this.setState({
-        searchedUserFollowingList: followList,
-        searchedUserFollowersList: followedList, 
-        searchedUser: userObj,
-        searchedUserSharedSongsIds: searchedUserSharedSongsIds,
-        searchedUserSharedSongsList: searchedUserSharedSongsList
-       })
-      }
       
 
   
@@ -180,12 +118,8 @@ class App extends Component {
 
   searchedUser = (user) =>{
 
-     
 
-    // if (user === this.state.loggedInUser){
-    //   this.reFetchLoggedInUser(user.id)
-    // } else {
-    debugger 
+     
     let id = user.id
     let userObj = {}
     fetch(`http://localhost:3000/users/${id}`)
@@ -196,40 +130,6 @@ class App extends Component {
         searchedUser: resp.user,
         timeline: []
       })
-
-
-     
-      // this.createSelectedUser(resp.user)
-       
-     
-      // userObj["id"] = resp.user.id
-      // userObj["username"] = resp.user.username
-      // userObj["songs"] = resp.user.songs
-      // userObj["followers"] = resp.user.followed_by
-      // userObj["following"] = resp.user.follows
-      // let followList = []
-      // let followedList = []
-      // let searchedUserSharedSongsIds = []
-      // let searchedUserSharedSongsList = []
-      //     resp.user.follows.forEach((user) => followList.push(user.followed_id))
-      //     resp.user.followed_by.forEach((user) => followedList.push(user.follower_id))
-      //     resp.user.sharedsongs.forEach((song) => searchedUserSharedSongsIds.push(song.id))
-      //     resp.user.sharedsongs.forEach((song) => searchedUserSharedSongsList.push(song))
-
-      //     debugger 
-         
-
-      // this.setState({
-      //    searchedUserFollowingList: followList,
-      //    searchedUserFollowersList: followedList, 
-      //    searchedUser: userObj,
-      //    searchedUserSharedSongsIds: searchedUserSharedSongsIds,
-      //    searchedUserSharedSongsList: searchedUserSharedSongsList
-      //   })
-      
-    // })
-  // }
-     
     })  
 }
 
@@ -250,105 +150,9 @@ addNewSong = (song) =>{
 
 }
 
-  // followUser = (user) =>{
-  //   let loggedInUserFollows = this.state.loggedInUser.follows
-  //   let foundFollowObj = loggedInUserFollows.find((followObj) => followObj.followed_id == user.id )
-  //   // followed_id is the action person
- 
-  //   if (foundFollowObj) {
-  //     this.unfollowUser(foundFollowObj)
-  //   } else {
-
-    
-
-     
-  //   // let searchedUser = {
-  //   //   id: user.id,
-  //   //   username: user.username
-  //   // }
-
-    
-
-  //   // let followingUsers = this.state.followingList
-  //   // if (followingUsers.includes(user.id)){
-  //   //   this.unfollowUser(user)
-  //   // } else {
-     
-  //   let followed_id = user.id
-  //   let follower_id = this.state.loggedInUser.id
-  //   let followObj ={
-  //     followed: followed_id,
-  //     follower: follower_id
-  //   }
-
-  //   fetch('http://localhost:3000/follows', {
-  //     method: "POST",
-  //     headers: {
-  //       "Content-Type": "application/json"
-  //     },
-  //     body: JSON.stringify({
-  //       followObj
-  //     })
-  //   })
-  //   .then(resp => resp.json())
-  //   .then(console.log)
-  //   // this.setState({
-  //   //   followingList: [...this.state.followingList, followed_id]
-  //   // })
-  //   this.searchedUser(user)
-  //   this.reFetchLoggedInUser(this.state.loggedInUser.id)
-  //   // this.reFetchLoggedInUser(follower_id)
-  // }
-  // }
   closeComments = () =>{
     this.setState({selectedSong: null})
   }
-
-  // unfollowUser = (obj) =>{
-  //   let unfollowedUser = this.state.users.find((user) => user.id == obj.followed_id)
-
-    
-  //   // let loggedInUser = this.state.loggedInUser
-  //   // debugger 
-  //   // let loggedInUserUsername = this.state.loggedInUser.username
-  //   // let searchedUser = {
-  //   //   id: user.id,
-  //   //   username: user.username
-  //   // }
-    
-    
-  //   // let id = user.id 
-  //   // let list = this.state.followingList
-  //   // let updated = list.filter((id) => id !== id)
-  //   // let found = loggedInUser.follows.find((user) => user.followed_id == id)
-     
-  //   fetch(`http://localhost:3000/follows/${obj.id}`, {
-  //     method: "DELETE"
-  //   })
-  //   .then(resp => resp.json())
-  //   .then(console.log)
-  //   this.searchedUser(unfollowedUser)
-  //   this.reFetchLoggedInUser(this.state.loggedInUser.id)
-  // }
-
-  // // updateLoggedInUser = (id) =>{
-  // //   fetch(`http://localhost:3000/users/${id}`)
-  // //   .then(resp => resp.json())
-  // //   .then(resp => { 
-  // //     let followList = []
-  // //     let followedList = []
-  // //         resp.user.follows.forEach((user) => followList.push(user.followed_id))
-  // //         resp.user.followed_by.forEach((user) => followedList.push(user.follower_id))
-  // //         this.setState({
-  // //           loggedInUser: resp.user,
-  // //           followingList: followList,
-  // //           followersList: followedList
-  // //         })
-  // //   })
-    
-  // // }
-
-  
 
   logUser =(user)=>{
      

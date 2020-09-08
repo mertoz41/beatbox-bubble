@@ -45,37 +45,37 @@ class Login extends Component {
         return(
             <div>
                 <Grid textAlign='center' style={{ height: '100vh' }} verticalAlign='middle'>
-    <Grid.Column style={{ maxWidth: 450 }}>
-    <h1>Beatbox Bubble</h1>
-    <div className="login-icon">
-    <Icon.Group size='big'>
-    <Icon size='big' name='microphone'/>
-  </Icon.Group>
-  </div>
-      <Header as='h2' color='black' textAlign='center'>
+                  <Grid.Column style={{ maxWidth: 450 }}>
+                  <h1>Beatbox Bubble</h1>
+                  <div className="login-icon">
+                  <Icon.Group size='big'>
+                  <Icon size='big' name='microphone'/>
+                </Icon.Group>
+                </div>
+                <Header as='h2' color='black' textAlign='center'>
      
-        Log in to your account
-      </Header>
-      <Form size='large' onSubmit={event => this.login(event)}>
-        <Segment stacked>
-          <Form.Input fluid icon='user' iconPosition='left' placeholder='Username' name="username" onChange={event => this.fixState(event)}/>
-          <Form.Input
-            fluid
-            icon='lock'
-            iconPosition='left'
-            placeholder='Password'
-            type='password'
-            name='password'
-            onChange={event => this.fixState(event)}
-          />
+                Log in to your account
+                </Header>
+                <Form size='large' onSubmit={event => this.login(event)}>
+                  <Segment stacked>
+                    <Form.Input fluid icon='user' iconPosition='left' placeholder='Username' name="username" onChange={event => this.fixState(event)}/>
+                    <Form.Input
+                      fluid
+                      icon='lock'
+                      iconPosition='left'
+                      placeholder='Password'
+                      type='password'
+                      name='password'
+                      onChange={event => this.fixState(event)}
+                    />
 
-          <Button color='grey' fluid size='large'>
-            Login
-          </Button>
-        </Segment>
-      </Form>
-    </Grid.Column>
-    </Grid>
+                    <Button color='grey' fluid size='large'>
+                      Login
+                    </Button>
+                  </Segment>
+                </Form>
+              </Grid.Column>
+              </Grid>
             </div>
         )
     }

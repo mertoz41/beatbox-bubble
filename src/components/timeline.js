@@ -22,46 +22,30 @@ class Timeline extends Component {
 
 
     componentDidMount(){
+
         let loggedInUser = this.props.loggedInUser
         this.getTimeline(loggedInUser.id)
         this.getExplore()
         let namesList = loggedInUser.sharedsongs.map(song => song.name)
-         
-         
         this.setState({loggedInUserShares: loggedInUser.shares, loggedInUserSharedSongs: loggedInUser.sharedsongs, sharedSongNames: namesList})
 
-        // timeline needs to be sorted from recent to oldest. 
-
-        
-
-        // fetch(`http://localhost:3000/timeline/${loggedInUser.id}`)
-        // .then(resp => resp.json())
-        // .then(resp => {
-             
-        //     resp.tl_tracks.forEach((song) => {
-        //         this.fetchEachSong(song.id)
-        //     })
-            
-        // })
-        // // this.state.timeline.forEach((song) => this.trackComments(song))
     }
+
     getExplore = () =>{
+
         fetch('http://localhost:3000/explore')
         .then(resp => resp.json())
         .then(resp => {
             this.setState({exploreSongs: resp.explore_songs})
         })
+
     }
+
     getTimeline = (id) =>{
+
         fetch(`http://localhost:3000/timeline/${id}`)
             .then(resp => resp.json())
             .then(resp => {
-            //   resp.tl_tracks.forEach((track) => {
-            //     if (!track.shared){
-            //       track.shared = []
-            //     }
-            //   }) 
-             
             resp.tl_tracks.sort((a, b) => {
                 let keyA = new Date(a.created_at), keyB = new Date(b.created_at);
                 if (keyA < keyB) return -1;
@@ -70,47 +54,18 @@ class Timeline extends Component {
                 })
             let ordered = resp.tl_tracks.reverse()
              
-              this.setState({timeline: ordered})
-                // resp.tl_tracks.forEach((song) => {
-                //     this.fetchEachSong(song.id)
-                // })
-                
+              this.setState({timeline: ordered}) 
             })
+
       }
     
-
-    // fetchEachSong = (id) => {
-    //     // let timeline = this.state.timeline
-    //     // let found = timeline.find((song) => song.id == id)
-    //     // if (found){
-    //     //     let filtered = timeline.filter((song) => song !== found)
-    //     // }
-        
-         
-    //     fetch(`http://localhost:3000/songs/${id}`)
-    //     .then(resp => resp.json())
-    //     .then(resp => {
-              
-    //         let filtered = this.state.timeline.filter((song) => song.id !== resp.song.id)
-    //         filtered.push(resp.song)
-
-             
-    //         this.setState({
-    //             timeline: filtered
-    //         })
-             
-    //     })
-
-    // }
 
     getTrackDate = (track) =>{
          
         let date = new Date(track.created_at)
         let time = date.toLocaleTimeString()
-
         let post = time.split(':').splice(0,2).join(':')
         let ampm = time.split(':')[2].split(' ')[1]
-
         return `${date.toLocaleDateString()}`
 
     }
@@ -119,31 +74,25 @@ class Timeline extends Component {
         let allUsers = this.props.users 
         let found = allUsers.find((user) => user.id == track.user_id)
         return found.username
+
     }
     findUserImage = (track) => {
          
         let allUsers = this.props.users 
         let found = allUsers.find((user) => user.id == track.user_id)
-
         let userImage = require(`../pictures/${found.username}.png`)
         return userImage
+
     }
     playSong = (track) =>{
+
         let url = track.blob
         new Audio(`http://localhost:3000${url}`).play() 
+
     }
 
     trackComments = (track) =>{
         this.setState({selectedSong: track})
-
-         
-         
-        // fetch(`http://localhost:3000/songs/${track.id}`)
-        // .then(resp => resp.json())
-        // .then(resp => { 
-        //     debugger 
-        // })
-        
 
     }
 
@@ -170,22 +119,15 @@ class Timeline extends Component {
         .then(resp => resp.json())
         .then(resp => {
              
-            // this.props.getTimeline(this.props.loggedInUser.id)
             let selectedSong = this.state.selectedSong
             selectedSong.comments.push(resp.nu_comment)
-            
-             
             this.showTrackComments(selectedSong)
-            // this.props.fetchEachSong(resp.nu_comment.song_id) 
-
-            // this.setState({
-            //     selectedSongComments: [...this.state.selectedSongComments, resp.nu_comment]
-            // })
+           
         })
-        // this.trackComments(song)
     }
 
     getComments = (track)=>{
+
         let song = track
         let num 
         if (song.comments){
@@ -198,25 +140,17 @@ class Timeline extends Component {
     }
 
     exploreFunc =(track, shareObj) =>{
+
         let exploreSect = this.state.exploreSongs
          
-
     }
 
     shareSongFunc = (track) =>{
+
         let loggedInUser = this.props.loggedInUser
         let loggedInUserSharedSongs = this.state.loggedInUserSharedSongs
-
         let sharedVersion = loggedInUserSharedSongs.find((song) => song.name === track.name)
 
-        
-
-
-        
-         
-        
-        
-         
         if (sharedVersion){
             this.unshareSong(sharedVersion, track)
         } else {
@@ -258,49 +192,33 @@ class Timeline extends Component {
                 timeline: timeline,
                 sharedSongNames: songsList
             })
-            // need to update the shared songs shared prop in timeline as well
-            // resp.shared_obj to be added on found.shared
-            // this.props.getTimeline(this.props.loggedInUser.id)
+        
         })
     }
     }
 
     unshareSong = (sharedV, track) =>{
-        // let shares = this.props.loggedInUser.shares
-        // let found = shares.find((share) => share.sharedsong_id == track.id)
+        
         let loggedInUserShares = this.state.loggedInUserShares
         let loggedInUserSharedSongs = this.state.loggedInUserSharedSongs
-
         let filteredShares = loggedInUserShares.filter(share => share.sharedsong_id !== sharedV.id)
         let filteredSharedSongs = loggedInUserSharedSongs.filter(song => song.id !== sharedV.id)
-         
         let filteredSongShares = track.shared.filter(song => song.user_id !== this.props.loggedInUser.id)
-         
         track.shared = filteredSongShares
         let updatedTrack = track
         let timeline = this.state.timeline
         timeline.splice(timeline.indexOf(track), 1, updatedTrack)
         let filteredSongNames = this.state.sharedSongNames.filter(song => song !== track.name)
-
         let exploreSongs = this.state.exploreSongs
         let exploredVersion = exploreSongs.find((song) => song.name == track.name)
-        debugger 
         this.props.addLoggedInUserShares(sharedV, track)
         if (exploredVersion){
         let filteredShares = exploredVersion.shares.filter(share => share.user_id !== this.props.loggedInUser.id)
         exploredVersion.shares = filteredShares
-        
         exploreSongs.splice(exploreSongs.indexOf(exploredVersion), 1, exploredVersion)
         this.setState({exploreSongs: exploreSongs})
         }
-
-
         this.setState({timeline: timeline, sharedSongNames: filteredSongNames})
-
-
-         
-
-         
 
         fetch(`http://localhost:3000/shares/${this.props.loggedInUser.id}`, {
             method: "DELETE"
@@ -310,9 +228,7 @@ class Timeline extends Component {
             loggedInUserShares: filteredShares,
             loggedInUserSharedSongs: filteredSharedSongs
         })
-        // this.props.fetchEachSong(track.id)
-        // this.props.reFetchLoggedInUser(this.props.loggedInUser.id)
-        // this.props.getTimeline(this.props.loggedInUser.id)
+   
     }
 
     showTrackComments = (track) =>{
@@ -409,9 +325,6 @@ class Timeline extends Component {
                                 </Button>
                             </Button>
                             </div>
-                            {/* <Feed.Like>
-                            <Icon name='retweet' />4 Likes
-                            </Feed.Like> */}
                             </Feed.Meta>
                             </Feed.Content>
                             </div>

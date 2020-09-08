@@ -5,6 +5,7 @@ import { Button, Icon } from 'semantic-ui-react'
 
 class Pads extends Component {
     volumeButton = (index) =>{
+
         console.log(index)
         let list = this.props.mutedList
         let button 
@@ -15,7 +16,6 @@ class Pads extends Component {
         }
         return button 
          
-
     }
 
     render(){
