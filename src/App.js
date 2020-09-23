@@ -5,6 +5,8 @@ import { BrowserRouter, Route, Switch, Redirect} from 'react-router-dom';
 import Machine from './components/machine'
 import Timeline from './components/timeline'
 import Profile from './components/profile'
+import store from './redux/store';
+import {connect} from 'react-redux'
 
 class App extends Component {
   constructor(){
@@ -12,11 +14,6 @@ class App extends Component {
 
   
   this.state ={
-    loggedInUser: null,
-    session: false,
-    users: [],
-    searchedUser: null,
-    timeline: [],
     selectedSong: null
   }
 }
@@ -32,7 +29,7 @@ class App extends Component {
     fetch('http://localhost:3000/users')
     .then(resp => resp.json())
     .then(resp => {
-      this.setState({users: resp})
+      store.dispatch({type: "ALL_USERS_INCOMING", users: resp})
     })
   }
 
@@ -46,7 +43,8 @@ class App extends Component {
       })
       .then(resp => resp.json())
       .then(resp => {
-        this.logUser(resp.user)
+        this.getTimeline(resp.user.id)
+        store.dispatch({type: "LOG_USER_IN", loggedInUser: resp.user})
       })
   }
 
@@ -69,16 +67,19 @@ class App extends Component {
   }
 
   getTimeline = (id) =>{
+
     fetch(`http://localhost:3000/timeline/${id}`)
-        .then(resp => resp.json())
-        .then(resp => {
-          resp.tl_tracks.forEach((track) => {
-            if (!track.shared){
-              track.shared = []
-            }
-          })
-          this.setState({timeline: resp.tl_tracks})
+    .then(resp => resp.json())
+    .then(resp => {
+    resp.tl_tracks.sort((a, b) => {
+        let keyA = new Date(a.created_at), keyB = new Date(b.created_at);
+        if (keyA < keyB) return -1;
+        if (keyA > keyB) return 1;
+        return 0 
         })
+    let ordered = resp.tl_tracks.reverse()
+    store.dispatch({type: "TIMELINE_INCOMING", timeline: ordered})
+    })
   }
 
 
@@ -116,29 +117,28 @@ class App extends Component {
     this.setState({selectedSong: track})
   }
 
-  searchedUser = (user) =>{
+  // searchedUser = (user) =>{
 
 
      
-    let id = user.id
-    let userObj = {}
-    fetch(`http://localhost:3000/users/${id}`)
-    .then(resp => resp.json())
-    .then(resp => {
+  //   let id = user.id
+  //   let userObj = {}
+  //   fetch(`http://localhost:3000/users/${id}`)
+  //   .then(resp => resp.json())
+  //   .then(resp => {
        
-      this.setState({
-        searchedUser: resp.user,
-        timeline: []
-      })
-    })  
-}
+  //     this.setState({
+  //       searchedUser: resp.user,
+  //       timeline: []
+  //     })
+  //   })  
+// }
 
 addNewSong = (song) =>{
   let loggedInUser = this.state.loggedInUser
   loggedInUser.songs.unshift(song)
   let timeline = this.state.timeline
   let forTl = song 
-  debugger 
   forTl.comments = []
   forTl.shared = []
   timeline.unshift(forTl)
@@ -154,24 +154,25 @@ addNewSong = (song) =>{
     this.setState({selectedSong: null})
   }
 
-  logUser =(user)=>{
+  // logUser =(user)=>{ 
      
-    this.setState({ loggedInUser: user })
-    this.getTimeline(user.id)
-  }
+  //   this.setState({ loggedInUser: user })
+  //   this.getTimeline(user.id)
+  // }
 
-  startMachine = () =>{
-    this.setState({session: true})
-  }
-  backToTimeline = () => {
-    this.setState({
-      searchedUser: null,
-      session: false,
-      selectedSong: null
-    })
-    this.getTimeline(this.state.loggedInUser.id)
+  // startMachine = () =>{
+  //   this.setState({session: true})
+  // }
+
+  // backToTimeline = () => {
+  //   this.setState({
+  //     searchedUser: null,
+  //     session: false,
+  //     selectedSong: null
+  //   })
+  //   this.getTimeline(this.props.loggedInUser.id)
      
-  }
+  // }
 
   exitMachine = () =>{
     setTimeout(this.setState({session: false}), 4000)
@@ -210,37 +211,37 @@ addNewSong = (song) =>{
     <BrowserRouter>
       <Switch>
           <Route exact path="/login" render={() =>
-              this.state.loggedInUser ? 
+              this.props.loggedInUser ? 
               <Redirect to="/timeline" />
               :
-              <Login logUser={this.logUser} />
+              <Login getTimeline={this.getTimeline} logUser={this.logUser} />
               }
             />
           <Route exact path="/timeline" render={() =>
-              this.state.loggedInUser ? 
-              <Timeline addLoggedInUserShares={this.addLoggedInUserShares} getTimeline={this.getTimeline} toLoggedInUserProfile={this.toLoggedInUserProfile}closeComments={this.closeComments} selectedSong={this.state.selectedSong} showTrackComments={this.showTrackComments} timeline={this.state.timeline} fetchEachSong={this.fetchEachSong} logUserOut={this.logUserOut} backToTimeline={this.backToTimeline} reFetchLoggedInUser={this.reFetchLoggedInUser} loggedInUserSharedSongsIds={this.state.loggedInUserSharedSongsIds} loggedInUserSharedSongsList={this.state.loggedInUserSharedSongsList} selectedUser={this.state.searchedUser} searchedUser={this.searchedUser} users={this.state.users} startMachine={this.startMachine} loggedInUser={this.state.loggedInUser} />
+              this.props.loggedInUser ? 
+              <Timeline getTimeline={this.getTimeline} addLoggedInUserShares={this.addLoggedInUserShares} getTimeline={this.getTimeline} toLoggedInUserProfile={this.toLoggedInUserProfile}closeComments={this.closeComments} selectedSong={this.state.selectedSong} showTrackComments={this.showTrackComments} timeline={this.state.timeline} fetchEachSong={this.fetchEachSong} logUserOut={this.logUserOut} backToTimeline={this.backToTimeline} reFetchLoggedInUser={this.reFetchLoggedInUser} loggedInUserSharedSongsIds={this.state.loggedInUserSharedSongsIds} loggedInUserSharedSongsList={this.state.loggedInUserSharedSongsList} selectedUser={this.state.searchedUser} searchedUser={this.searchedUser} users={this.state.users} startMachine={this.startMachine} loggedInUser={this.state.loggedInUser} />
               :
               <Redirect to="/login" />
               }
               />
           <Route exact path="/" render={()=>
-          this.state.loggedInUser ?
+          this.props.loggedInUser ?
           <Redirect to='/timeline' />
             :
-          <Login logUser={this.logUser} />
+          <Login getTimeline={this.getTimeline} logUser={this.logUser} />
             }
           />
 
           <Route exact path="/machine" render={() => 
-              this.state.session ? 
-              <Machine  addNewSong={this.addNewSong} toLoggedInUserProfile={this.toLoggedInUserProfile} exitMachine={this.exitMachine} logUserOut={this.logUserOut} backToTimeline={this.backToTimeline} searchedUser={this.searchedUser} users={this.state.users} loggedInUser={this.state.loggedInUser} startMachine={this.startMachine}/>
+              this.props.session ? 
+              <Machine  getTimeline={this.getTimeline} addNewSong={this.addNewSong} toLoggedInUserProfile={this.toLoggedInUserProfile} exitMachine={this.exitMachine} logUserOut={this.logUserOut} backToTimeline={this.backToTimeline} searchedUser={this.searchedUser} users={this.state.users} loggedInUser={this.state.loggedInUser} startMachine={this.startMachine}/>
               :
               <Redirect to="/login" />
               }
           />
-          <Route exact path="/profile" render={() =>
-            this.state.searchedUser ?
-            <Profile toLoggedInUserProfile={this.toLoggedInUserProfile} searchedUserSharedSongsList={this.state.searchedUserSharedSongsList} logUserOut={this.logUserOut} backToTimeline={this.backToTimeline} userSharedSongsList={this.state.userSharedSongsList} searchedUserFollowersList={this.state.searchedUserFollowersList} searchedUserFollowingList={this.state.searchedUserFollowingList} followersList={this.state.followersList} followingList={this.state.followingList} followUser={this.followUser} selectedUser={this.state.searchedUser} searchedUser={this.searchedUser} users={this.state.users} startMachine={this.startMachine} loggedInUser={this.state.loggedInUser} reFetchLoggedInUser={this.reFetchLoggedInUser} />
+          <Route exact path="/profile/:name" render={() =>
+            this.props.searchedUser ?
+            <Profile getTimeline={this.getTimeline} toLoggedInUserProfile={this.toLoggedInUserProfile} searchedUserSharedSongsList={this.state.searchedUserSharedSongsList} logUserOut={this.logUserOut} backToTimeline={this.backToTimeline} userSharedSongsList={this.state.userSharedSongsList} searchedUserFollowersList={this.state.searchedUserFollowersList} searchedUserFollowingList={this.state.searchedUserFollowingList} followersList={this.state.followersList} followingList={this.state.followingList} followUser={this.followUser} selectedUser={this.state.searchedUser} searchedUser={this.searchedUser} users={this.state.users} startMachine={this.startMachine} loggedInUser={this.state.loggedInUser} reFetchLoggedInUser={this.reFetchLoggedInUser} />
             :
             <Redirect to="/login" />
           }
@@ -255,5 +256,11 @@ addNewSong = (song) =>{
 
   )}
 }
-
-export default App;
+const mapStateToProps = (state) =>{
+  return{
+    loggedInUser: state.loggedInUser,
+    session: state.session,
+    searchedUser: state.searchedUser
+  }
+}
+export default connect(mapStateToProps)(App);

@@ -5,12 +5,13 @@ import { Button, Feed, Icon, Label } from 'semantic-ui-react'
 import Comments from './comments'
 import Waveform from './waveform'
 import Explore from './explore'
+import {connect} from 'react-redux'
+import store from '../redux/store'
 
 
 
 class Timeline extends Component {
     state = {
-        timeline: [],
         selectedSong: null,
         loggedInUserShares: [],
         loggedInUserSharedSongs: [],
@@ -24,7 +25,7 @@ class Timeline extends Component {
     componentDidMount(){
 
         let loggedInUser = this.props.loggedInUser
-        this.getTimeline(loggedInUser.id)
+        // this.getTimeline(loggedInUser.id)
         this.getExplore()
         let namesList = loggedInUser.sharedsongs.map(song => song.name)
         this.setState({loggedInUserShares: loggedInUser.shares, loggedInUserSharedSongs: loggedInUser.sharedsongs, sharedSongNames: namesList})
@@ -41,23 +42,24 @@ class Timeline extends Component {
 
     }
 
-    getTimeline = (id) =>{
+    // getTimeline = (id) =>{
 
-        fetch(`http://localhost:3000/timeline/${id}`)
-            .then(resp => resp.json())
-            .then(resp => {
-            resp.tl_tracks.sort((a, b) => {
-                let keyA = new Date(a.created_at), keyB = new Date(b.created_at);
-                if (keyA < keyB) return -1;
-                if (keyA > keyB) return 1;
-                return 0 
-                })
-            let ordered = resp.tl_tracks.reverse()
-             
-              this.setState({timeline: ordered}) 
-            })
+    //     fetch(`http://localhost:3000/timeline/${id}`)
+    //         .then(resp => resp.json())
+    //         .then(resp => {
+    //         resp.tl_tracks.sort((a, b) => {
+    //             let keyA = new Date(a.created_at), keyB = new Date(b.created_at);
+    //             if (keyA < keyB) return -1;
+    //             if (keyA > keyB) return 1;
+    //             return 0 
+    //             })
+    //         let ordered = resp.tl_tracks.reverse()
+    //         store.dispatch({type: "TIMELINE_INCOMING", timeline: ordered})
 
-      }
+        
+    //         })
+
+    //   }
     
 
     getTrackDate = (track) =>{
@@ -256,13 +258,13 @@ class Timeline extends Component {
 
     
     render(){
-        if (this.props.selectedUser){
-            return <Redirect to="/profile" />
-        }
+        // if (this.props.selectedUser){
+        //     return <Redirect to="/profile" />
+        // }
      
         return(
             <div>
-                <Navbar toLoggedInUserProfile={this.props.toLoggedInUserProfile} logUserOut={this.props.logUserOut} backToTimeline={this.props.backToTimeline} searchedUser={this.props.searchedUser} users={this.props.users} loggedInUser={this.props.loggedInUser} startMachine={this.props.startMachine}/>
+                <Navbar getTimeline={this.props.getTimeline} toLoggedInUserProfile={this.props.toLoggedInUserProfile} logUserOut={this.props.logUserOut} backToTimeline={this.props.backToTimeline} searchedUser={this.props.searchedUser} users={this.props.users} loggedInUser={this.props.loggedInUser} startMachine={this.props.startMachine}/>
                 <div onClick={() => this.showExploreSect()} className="explore-writing">
                 <h3>Explore</h3>
                 </div>
@@ -277,7 +279,7 @@ class Timeline extends Component {
                 </div>
                     <div className="timeline-scroller">
                     <Feed>
-                    {this.state.timeline.map((track) =>{
+                    {this.props.timeline.map((track) =>{
                         return(
                             <Feed.Event>
                             <Feed.Label>
@@ -346,4 +348,12 @@ class Timeline extends Component {
     }
 }
 
-export default Timeline 
+const mapStateToProps = (state) =>{
+    return {
+        loggedInUser: state.loggedInUser,
+        users: state.users,
+        timeline: state.timeline
+    }
+}
+
+export default connect(mapStateToProps)(Timeline) 

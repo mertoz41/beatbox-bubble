@@ -1,5 +1,6 @@
 import React,{Component} from 'react'
 import { Button, Form, Grid, Header, Image, Message, Segment, Icon} from 'semantic-ui-react'
+import store from '../redux/store'
 
 
 
@@ -31,7 +32,10 @@ class Login extends Component {
         .then(resp => {
            
             if(resp.user){
-                this.props.logUser(resp.user)
+              this.props.getTimeline(resp.user.id)
+              // dispatch for  "LOG_USER_IN"
+              store.dispatch({type: "LOG_USER_IN", loggedInUser: resp.user})
+                // this.props.logUser(resp.user)
                 localStorage.setItem('jwt', resp.token)
             } else {
                 alert(resp.message)

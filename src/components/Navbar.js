@@ -3,6 +3,8 @@ import { Search, Grid, Button, Icon  } from 'semantic-ui-react'
 import { withRouter } from "react-router";
 import { Redirect } from 'react-router-dom';
 import mics from '../pictures/mics.png'
+import {connect} from 'react-redux'
+import store from '../redux/store';
 
 
 
@@ -30,30 +32,45 @@ class Navbar extends Component{
     }
 
     selectedUser =(event) =>{
+         
 
         let foundUser = this.props.users.find((user) => user.username == event.target.innerText)
-        this.props.searchedUser(foundUser)
-        this.props.history.push('/machine')
+
+        fetch(`http://localhost:3000/users/${foundUser.id}`)
+        .then(resp => resp.json())
+        .then(resp => {
+            store.dispatch({type: "SEARCHED_USER_INCOMING", searchedUser: resp.user})
+            this.props.history.push(`/profile/${resp.user.username}`)
+             
+        })
+
+        // this.props.searchedUser(foundUser)
+        // this.props.history.push('/machine')
 
     }
 
     machineRedirect = () =>{
+        store.dispatch({type: "START_MACHINE"})
 
         this.props.history.push('/machine')
-        this.props.startMachine()
+        // this.props.startMachine()
 
     }
     timelineRedirect = () =>{
 
+        store.dispatch({type: "BACK_TO_TIMELINE"})
+        this.props.getTimeline(this.props.loggedInUser.id)
         this.props.history.push('/timeline')
-        this.props.backToTimeline()
+
 
     }
 
     userRedirect = () =>{
          
-        this.props.searchedUser(this.props.loggedInUser)
-        this.props.history.push('/profile')
+         
+        // this.props.searchedUser(this.props.loggedInUser)
+        store.dispatch({type: "SEARCHED_USER_INCOMING", searchedUser: this.props.loggedInUser})
+        this.props.history.push(`/profile/${this.props.loggedInUser.username}`)
 
     }
 
@@ -61,7 +78,8 @@ class Navbar extends Component{
         
         localStorage.clear()
         this.props.history.push('/login')
-        this.props.logUserOut()
+        store.dispatch({type: "LOG_USER_OUT"})
+        // this.props.logUserOut()
 
     }
 
@@ -88,7 +106,7 @@ class Navbar extends Component{
                 
 
                 <div class="username">
-                <Button icon labelPosition='left' onClick={() => this.props.toLoggedInUserProfile(this.props.loggedInUser)}>
+                <Button icon labelPosition='left' onClick={() => this.userRedirect()}>
                 <Icon name='user' />
                 {this.props.loggedInUser.username}
                 </Button>
@@ -105,4 +123,11 @@ class Navbar extends Component{
     }
 }
 
-export default withRouter(Navbar)
+const mapStateToProps = (state) =>{
+    return{
+        loggedInUser: state.loggedInUser,
+        users: state.users
+    }
+}
+
+export default connect(mapStateToProps)(withRouter(Navbar))

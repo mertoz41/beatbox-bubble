@@ -5,6 +5,7 @@ import Waveform from './waveform'
 import Waveformpro from './waveformpro'
 import WaveSurfer from 'wavesurfer.js';
 import { Button, Feed, Icon, Label, Card, Image} from 'semantic-ui-react'
+import { connect } from 'react-redux'
 
 
 
@@ -296,4 +297,12 @@ class Profile extends Component{
     }
 }
 
-export default Profile
+const mapStateToProps = (state) =>{
+    return {
+        loggedInUser: state.loggedInUser,
+        users: state.users,
+        selectedUser: state.searchedUser
+    }
+}
+
+export default connect(mapStateToProps)(Profile)
