@@ -62,19 +62,7 @@ class App extends Component {
     })
   }
 
-  addNewSong = (song) =>{
-      let loggedInUser = this.state.loggedInUser
-      loggedInUser.songs.unshift(song)
-      let timeline = this.state.timeline
-      let forTl = song 
-      forTl.comments = []
-      forTl.shared = []
-      timeline.unshift(forTl)
-      this.setState({
-        loggedInUser: loggedInUser,
-        timeline: timeline
-      })
-}
+
 
   render(){
   return (
@@ -104,7 +92,7 @@ class App extends Component {
 
           <Route exact path="/machine" render={() => 
               this.props.session ? 
-              <Machine  getTimeline={this.getTimeline} addNewSong={this.addNewSong}   />
+              <Machine  getTimeline={this.getTimeline}    />
               :
               <Redirect to="/login" />
               }

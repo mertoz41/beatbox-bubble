@@ -7,6 +7,7 @@ import Waveform from './waveform'
 import Explore from './explore'
 import {connect} from 'react-redux'
 import store from '../redux/store'
+import Timelinefeed from './timelinefeed'
 
 
 
@@ -33,6 +34,8 @@ class Timeline extends Component {
 
     getExplore = () =>{
 
+        // explore section content
+
         fetch('http://localhost:3000/explore')
         .then(resp => resp.json())
         .then(resp => {
@@ -41,36 +44,7 @@ class Timeline extends Component {
 
     }
 
-    getTrackDate = (track) =>{
-         
-        let date = new Date(track.created_at)
-        let time = date.toLocaleTimeString()
-        let post = time.split(':').splice(0,2).join(':')
-        let ampm = time.split(':')[2].split(' ')[1]
-        return `${date.toLocaleDateString()}`
 
-    }
-    findUserName = (track) => {
-         
-        let allUsers = this.props.users 
-        let found = allUsers.find((user) => user.id == track.user_id)
-        return found.username
-
-    }
-    findUserImage = (track) => {
-         
-        let allUsers = this.props.users 
-        let found = allUsers.find((user) => user.id == track.user_id)
-        let userImage = require(`../pictures/${found.username}.png`)
-        return userImage
-
-    }
-    playSong = (track) =>{
-
-        let url = track.blob
-        new Audio(`http://localhost:3000${url}`).play() 
-
-    }
 
 
 
@@ -96,27 +70,13 @@ class Timeline extends Component {
         })
         .then(resp => resp.json())
         .then(resp => {
-            // comment is added to the selected song to be displayed in comments section. 
+            // comment object is added to the selected song to be displayed in comments section. 
             let selectedSong = this.state.selectedSong
             selectedSong.comments.push(resp.nu_comment)
             this.showTrackComments(selectedSong)
            
         })
     }
-
-    getComments = (track)=>{
-
-        let song = track
-        let num 
-        if (song.comments){
-            num = song.comments.length
-        } else {
-            num = 0
-        }
-         
-        return num
-    }
-
   
 
     shareSongFunc = (track) =>{
@@ -229,13 +189,9 @@ class Timeline extends Component {
         })
     }
 
-    songCommentCount = (song) =>{
-        let songC = song
-        return song.comment_count
-         
-    }
 
     showExploreSect = () =>{
+        // display explore section
         this.setState({
             showExplore: !this.state.showExplore
         })
@@ -249,83 +205,26 @@ class Timeline extends Component {
             <div>
                 <Navbar getTimeline={this.props.getTimeline} toLoggedInUserProfile={this.props.toLoggedInUserProfile} logUserOut={this.props.logUserOut} backToTimeline={this.props.backToTimeline} searchedUser={this.props.searchedUser} users={this.props.users} loggedInUser={this.props.loggedInUser} startMachine={this.props.startMachine}/>
                 <div onClick={() => this.showExploreSect()} className="explore-writing">
-                <h3>Explore</h3>
+                    <h3>Explore</h3>
                 </div>
                 {this.state.showExplore ?
-                <Explore users={this.props.users} exploreSongs={this.state.exploreSongs}/>
+                    <Explore users={this.props.users} exploreSongs={this.state.exploreSongs}/>
                 : 
-                null   
+                    null   
                 }
                 <div className="timeline">
-                <div className="timeline-writing">
-                <h3>Timeline</h3>
-                </div>
+                    <div className="timeline-writing">
+                        <h3>Timeline</h3>
+                    </div>
                     <div className="timeline-scroller">
-                    <Feed>
-                    {this.props.timeline.map((track) =>{
-                        return(
-                            <Feed.Event>
-                            <Feed.Label>
-                            <div className="tl-image">
-                            <img src={this.findUserImage(track)} />
-                            </div>
-                            </Feed.Label>
-                                <div className='timeline-song'>
-                            <Feed.Content>
-                            <Feed.Summary>
-                                <div className="timeline-song-letters">
-
-                                
-                            <Feed.User>{this.findUserName(track)}</Feed.User>: {track.name}
-                            <Feed.Date>{this.getTrackDate(track)}</Feed.Date>
-                            </div>
-                            </Feed.Summary>
-                            <Feed.Meta>
-                            <div className="experiment">
-                            <Waveform track={track} />
-                            </div>
-                            <div className="timeline-buttons">
-                            <Button onClick={() => this.showTrackComments(track)} as='div' labelPosition='left'>
-                            <Label as='a' basic>
-                                {track.comments.length}
-                            </Label>
-                            <Button icon>
-                                {track.comments.length > 0 ?
-                                <Icon name='comment' />
-                                :
-                                <Icon name='comment outline' />
-                            }
-                            </Button>
-                            </Button>
-                            <Button as="div" labelPosition='left' onClick={() => this.shareSongFunc(track)}>
-                                <Label as='a' basic>
-                                    {track.shared.length}
-                                </Label>
-                                <Button icon>
-                                    {this.state.sharedSongNames.includes(track.name) ?
-                                    <Icon name='bookmark' />
-                                    :
-                                    <Icon name="bookmark outline" />
-                                }
-                                </Button>
-                            </Button>
-                            </div>
-                            </Feed.Meta>
-                            </Feed.Content>
-                            </div>
-
-                            </Feed.Event>
-                        
-                        )
-                    })}
-                    </Feed>
+                        <Timelinefeed showTrackComments={this.showTrackComments}/>
                     </div>
                 </div>
                 {this.state.selectedSong ?
-                <Comments closeComments={this.closeComments} postComment={this.postComment} allUsers={this.props.users} loggedInUser={this.props.loggedInUser} selectedSong={this.state.selectedSong}/>
-            :
-            null
-            }
+                    <Comments closeComments={this.closeComments} postComment={this.postComment} allUsers={this.props.users} loggedInUser={this.props.loggedInUser} selectedSong={this.state.selectedSong}/>
+                :
+                    null
+                }
             </div>
         )
     }
