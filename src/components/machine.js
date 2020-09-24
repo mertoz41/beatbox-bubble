@@ -5,6 +5,9 @@ import Recorder from './recorder'
 import Playlist from './playlist'
 import { Button, Icon } from 'semantic-ui-react'
 import Navbar from './Navbar'
+import store from '../redux/store'
+import { connect } from 'react-redux'
+import { withRouter } from "react-router";
 
 
 
@@ -14,7 +17,7 @@ class Machine extends Component {
         this.state = {
           blobChannels: [],
           muted: [],
-            experiment: "",
+          experiment: "",
           recordedSamples: [],
           sampleLetters: [],
           recordedPatterns: [],
@@ -32,6 +35,7 @@ class Machine extends Component {
         this.toggleActive = this.toggleActive.bind(this)
     
       }
+      // modularize components <tabs> <machine screen> 
 
       resetSequencer = () =>{
         this.setState({pads: []})
@@ -252,7 +256,6 @@ class Machine extends Component {
         formData.append("id", id)
         formData.append("track", trackBlob)
         formData.append("name", trackName)
-        debugger 
          
         fetch('http://localhost:3000/songs', {
           method: "POST",
@@ -264,7 +267,16 @@ class Machine extends Component {
         })
         .then(resp => resp.json())
         .then(resp => {
-          this.props.addNewSong(resp)
+          let loggedInUser = {...this.props.loggedInUser}
+          loggedInUser.songs.unshift(resp)
+          let timeline = [...this.props.timeline]
+          let forTl = resp 
+          forTl.comments = []
+          forTl.shared = []
+          timeline.unshift(forTl)
+          store.dispatch({type: "ADD_SONG_TIMELINE", timeline: timeline})
+          store.dispatch({type: "ADD_SONG_USER", loggedInUser: loggedInUser})
+          this.props.history.push("/timeline")
         }) 
       
       }
@@ -323,5 +335,10 @@ class Machine extends Component {
         )
     }
 }
-
-export default Machine 
+const mapStateToProps = (state) =>{
+  return{
+    loggedInUser: state.loggedInUser,
+    timeline: state.timeline
+  }
+}
+export default connect(mapStateToProps)(withRouter(Machine)) 

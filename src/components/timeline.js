@@ -13,7 +13,7 @@ import store from '../redux/store'
 class Timeline extends Component {
     state = {
         selectedSong: null,
-        loggedInUserShares: [],
+        loggedInUserSharedObjects: [],
         loggedInUserSharedSongs: [],
         sharedSongNames: [],
         exploreSongs: [],
@@ -25,10 +25,9 @@ class Timeline extends Component {
     componentDidMount(){
 
         let loggedInUser = this.props.loggedInUser
-        // this.getTimeline(loggedInUser.id)
         this.getExplore()
         let namesList = loggedInUser.sharedsongs.map(song => song.name)
-        this.setState({loggedInUserShares: loggedInUser.shares, loggedInUserSharedSongs: loggedInUser.sharedsongs, sharedSongNames: namesList})
+        this.setState({loggedInUserSharedObjects: loggedInUser.shares, loggedInUserSharedSongs: loggedInUser.sharedsongs, sharedSongNames: namesList})
 
     }
 
@@ -41,26 +40,6 @@ class Timeline extends Component {
         })
 
     }
-
-    // getTimeline = (id) =>{
-
-    //     fetch(`http://localhost:3000/timeline/${id}`)
-    //         .then(resp => resp.json())
-    //         .then(resp => {
-    //         resp.tl_tracks.sort((a, b) => {
-    //             let keyA = new Date(a.created_at), keyB = new Date(b.created_at);
-    //             if (keyA < keyB) return -1;
-    //             if (keyA > keyB) return 1;
-    //             return 0 
-    //             })
-    //         let ordered = resp.tl_tracks.reverse()
-    //         store.dispatch({type: "TIMELINE_INCOMING", timeline: ordered})
-
-        
-    //         })
-
-    //   }
-    
 
     getTrackDate = (track) =>{
          
@@ -93,13 +72,10 @@ class Timeline extends Component {
 
     }
 
-    trackComments = (track) =>{
-        this.setState({selectedSong: track})
 
-    }
 
     postComment = (commnt) =>{
-         
+        // create comment object for post request
         let comment = commnt 
         let song = this.state.selectedSong
         let selectedSongId = this.state.selectedSong.id
@@ -120,7 +96,7 @@ class Timeline extends Component {
         })
         .then(resp => resp.json())
         .then(resp => {
-             
+            // comment is added to the selected song to be displayed in comments section. 
             let selectedSong = this.state.selectedSong
             selectedSong.comments.push(resp.nu_comment)
             this.showTrackComments(selectedSong)
@@ -141,25 +117,22 @@ class Timeline extends Component {
         return num
     }
 
-    exploreFunc =(track, shareObj) =>{
-
-        let exploreSect = this.state.exploreSongs
-         
-    }
+  
 
     shareSongFunc = (track) =>{
-
-        let loggedInUser = this.props.loggedInUser
+        // determine whether song exists inside logged in users shared songs list.
         let loggedInUserSharedSongs = this.state.loggedInUserSharedSongs
         let sharedVersion = loggedInUserSharedSongs.find((song) => song.name === track.name)
 
         if (sharedVersion){
+            // call unshare func.
             this.unshareSong(sharedVersion, track)
         } else {
+            // create a share obj for post request. 
              
         let shareObj = {
             song_id: track.id,
-            user_id: loggedInUser.id
+            user_id: this.props.loggedInUser.id
         }
         
         fetch('http://localhost:3000/shares', {
@@ -174,22 +147,22 @@ class Timeline extends Component {
             let timeline = this.state.timeline
             let exploreSongs = this.state.exploreSongs
             let exploredVersion = exploreSongs.find((song) => song.name == track.name)
+            // update explored songs section
 
             if (exploredVersion){
                 exploredVersion.shares.push(resp.shared_obj)
                 exploreSongs.splice(exploreSongs.indexOf(track), 1, exploredVersion)
                 this.setState({exploreSongs: exploreSongs})
             }
-
-
-            let found = timeline.find(song => song == track)
-            found.shared.push(resp.shared_obj)
-            timeline.splice(timeline.indexOf(track), 1, found) 
+            // update songs shared list, timeline, logged in users shared objects and songs, and shared song names list
+             
+            let foundSong = timeline.find(song => song == track)
+            foundSong.shared.push(resp.shared_obj)
+            timeline.splice(timeline.indexOf(track), 1, foundSong) 
             let songsList = this.state.sharedSongNames
             songsList.push(track.name)
-            this.props.addLoggedInUserShares(resp.shared_obj, resp.shared_song)
             this.setState({
-                loggedInUserShares: [...this.state.loggedInUserShares, resp.shared_obj],
+                loggedInUserSharedObjects: [...this.state.loggedInUserSharedObjects, resp.shared_obj],
                 loggedInUserSharedSongs: [...this.state.loggedInUserSharedSongs, resp.shared_song],
                 timeline: timeline,
                 sharedSongNames: songsList
@@ -200,41 +173,53 @@ class Timeline extends Component {
     }
 
     unshareSong = (sharedV, track) =>{
-        
-        let loggedInUserShares = this.state.loggedInUserShares
+
+        // update shared objects
+        let loggedInUserSharedObjects = this.state.loggedInUserSharedObjects
+        let filteredShares = loggedInUserSharedObjects.filter(share => share.sharedsong_id !== sharedV.id)
+
+
+        // update shared songs
         let loggedInUserSharedSongs = this.state.loggedInUserSharedSongs
-        let filteredShares = loggedInUserShares.filter(share => share.sharedsong_id !== sharedV.id)
         let filteredSharedSongs = loggedInUserSharedSongs.filter(song => song.id !== sharedV.id)
+
+        // update track's shared prop and push it back to timeline.
         let filteredSongShares = track.shared.filter(song => song.user_id !== this.props.loggedInUser.id)
         track.shared = filteredSongShares
         let updatedTrack = track
         let timeline = this.state.timeline
         timeline.splice(timeline.indexOf(track), 1, updatedTrack)
+
+        // update sharedSongNames which is used to show whether song is shared or not. 
         let filteredSongNames = this.state.sharedSongNames.filter(song => song !== track.name)
+
+        // update explore section if unshared song exists in exploreSongs. 
         let exploreSongs = this.state.exploreSongs
         let exploredVersion = exploreSongs.find((song) => song.name == track.name)
-        this.props.addLoggedInUserShares(sharedV, track)
         if (exploredVersion){
         let filteredShares = exploredVersion.shares.filter(share => share.user_id !== this.props.loggedInUser.id)
         exploredVersion.shares = filteredShares
         exploreSongs.splice(exploreSongs.indexOf(exploredVersion), 1, exploredVersion)
         this.setState({exploreSongs: exploreSongs})
         }
-        this.setState({timeline: timeline, sharedSongNames: filteredSongNames})
+
+        this.setState({
+            timeline: timeline,
+            sharedSongNames: filteredSongNames
+        })
 
         fetch(`http://localhost:3000/shares/${this.props.loggedInUser.id}`, {
             method: "DELETE"
         })
         .then(resp => resp.json())
         this.setState({
-            loggedInUserShares: filteredShares,
+            loggedInUserSharedObjects: filteredShares,
             loggedInUserSharedSongs: filteredSharedSongs
         })
    
     }
 
     showTrackComments = (track) =>{
-         
         this.setState({selectedSong: track})
     }
 
@@ -258,9 +243,7 @@ class Timeline extends Component {
 
     
     render(){
-        // if (this.props.selectedUser){
-        //     return <Redirect to="/profile" />
-        // }
+        
      
         return(
             <div>

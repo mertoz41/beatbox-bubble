@@ -23,6 +23,10 @@ function reducer(state = initialState, action){
             return {...state, session: false, searchedUser: null};
         case "SEARCHED_USER_INCOMING":
             return {...state, searchedUser: action.searchedUser};
+        case "ADD_SONG_TIMELINE":
+            return {...state, timeline: action.timeline};
+        case "ADD_SONG_USER":
+            return {...state, loggedInUser: action.loggedInUser};
         default:
             return state
     }

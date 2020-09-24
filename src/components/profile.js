@@ -13,7 +13,7 @@ import { connect } from 'react-redux'
 
 class Profile extends Component{
     state = {
-        userTracks: [],
+        
         showFollowingList: false,
         showFollowersList: false,
         playing: false,
@@ -23,15 +23,17 @@ class Profile extends Component{
     }
 
     componentDidMount(){
+
+        // modularize components, <profilecard>, <usersongs>, <sharedtracks>
          
         let loggedInUserFollowingList = this.props.loggedInUser.follows
         let selectedUser = this.props.selectedUser
-        let followersArray = []
+        let selectedUserFollowersArray = []
         selectedUser.followed_by.forEach(follow => {
             let foundUser = this.props.users.find(user => user.id == follow.follower_id)
-            followersArray.push(foundUser)
+            selectedUserFollowersArray.push(foundUser)
         })
-        this.setState({selectedUserFollowers: followersArray, loggedInUserFollowObjs: loggedInUserFollowingList}) 
+        this.setState({selectedUserFollowers: selectedUserFollowersArray, loggedInUserFollowObjs: loggedInUserFollowingList}) 
         let found = loggedInUserFollowingList.find(follower => follower.followed_id == selectedUser.id)
         if (found){
             this.setState({followedByLoggedInUser: true})
@@ -40,9 +42,7 @@ class Profile extends Component{
         
     }
 
-    componentWillUnmount(){
-        this.props.reFetchLoggedInUser(this.props.loggedInUser.id)
-    }
+
 
  
 
@@ -111,28 +111,28 @@ class Profile extends Component{
     }
 
     followFunction = (user) =>{
+
         let userInstance = {id: this.props.loggedInUser.id, username: this.props.loggedInUser.username}
         let followersList = this.state.selectedUserFollowers
 
     
         if (this.state.followedByLoggedInUser){
+            // user to be unfollowed
             let filtered = followersList.filter(person => person.id !== userInstance.id)
              
             this.setState({
                 followedByLoggedInUser: false,
                 selectedUserFollowers: filtered
             })
-            console.log("user to be unfollowed")
             this.unfollowUser()
-            // unfollow user 
         } else {
+            // user to be followed
             this.setState({
                 followedByLoggedInUser: true,
                 selectedUserFollowers: [...this.state.selectedUserFollowers, userInstance]
             })
             console.log("user to be followed")
             this.followUser()
-            // follow user 
         }
 
     }
@@ -149,22 +149,22 @@ class Profile extends Component{
         return found.username
         
     }
-    prepareTrack = (wave, song) =>{
-        let waveObj = {}
-        let wavy = wave
-        let blob = `http://localhost:3000${song.blob}`
-        wavy.load(blob)
+    // prepareTrack = (wave, song) =>{
+    //     let waveObj = {}
+    //     let wavy = wave
+    //     let blob = `http://localhost:3000${song.blob}`
+    //     wavy.load(blob)
          
-        waveObj[song.id] = wavy
-        this.setState({ userTracks: [...this.state.userTracks, waveObj]})
-    }
+    //     waveObj[song.id] = wavy
+    //     this.setState({ userTracks: [...this.state.userTracks, waveObj]})
+    // }
 
-    playTrack = (id) =>{
-        let userTracks = this.state.userTracks
-        let found = userTracks.find((track) => track[id])
+    // playTrack = (id) =>{
+    //     let userTracks = this.state.userTracks
+    //     let found = userTracks.find((track) => track[id])
          
 
-    }
+    // }
 
     waveformCreator = (track) =>{
         let blob = `http://localhost:3000${track.blob}`
@@ -233,13 +233,8 @@ class Profile extends Component{
                     <Card.Header>{this.props.selectedUser.username}</Card.Header>
                     </Card.Content>
                  </Card>
-                 {loggedInUser == selectedUser ?
                  <Followmenu followersList={this.state.selectedUserFollowers} selectedUser={this.props.selectedUser} users={this.props.users}/>
-                 :
-                //  null
-                 <Followmenu followersList={this.state.selectedUserFollowers} selectedUser={this.props.selectedUser} users={this.props.users}/>
-                 
-                }
+               
                 </div>
                  
 
